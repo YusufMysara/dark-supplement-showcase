@@ -1,0 +1,41 @@
+import { Zap, Dumbbell, Heart, Brain } from "lucide-react";
+
+const categories = [
+  { name: "Pre-Workout", icon: Zap, desc: "Explosive energy & focus" },
+  { name: "Protein", icon: Dumbbell, desc: "Muscle growth & recovery" },
+  { name: "Vitamins", icon: Heart, desc: "Daily health essentials" },
+  { name: "Nootropics", icon: Brain, desc: "Cognitive performance" },
+];
+
+const Categories = () => {
+  return (
+    <section id="categories" className="py-20">
+      <div className="container mx-auto px-4">
+        <h2 className="mb-2 text-center font-display text-3xl font-bold text-foreground md:text-4xl">
+          Shop by <span className="text-primary">Category</span>
+        </h2>
+        <p className="mb-12 text-center font-body text-muted-foreground">
+          Find exactly what your body needs
+        </p>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {categories.map(({ name, icon: Icon, desc }) => (
+            <div
+              key={name}
+              className="group cursor-pointer rounded-lg border border-border bg-card p-6 text-center transition-all hover:border-primary/50 hover:bg-secondary"
+            >
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <Icon className="h-6 w-6" />
+              </div>
+              <h3 className="mb-1 font-display text-base font-semibold text-foreground">
+                {name}
+              </h3>
+              <p className="font-body text-xs text-muted-foreground">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Categories;
