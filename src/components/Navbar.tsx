@@ -1,7 +1,13 @@
 import { Dumbbell, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
-const navLinks = ["Products", "Categories", "About", "Contact"];
+const navLinks = [
+  { label: "Products", href: "/products" },
+  { label: "Categories", href: "/#categories" },
+  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
+];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -9,22 +15,22 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <a href="#" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <Dumbbell className="h-7 w-7 text-primary" />
           <span className="font-display text-xl font-bold tracking-wider text-foreground">
             FUEL<span className="text-primary">X</span>
           </span>
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
+            <Link
+              key={link.label}
+              to={link.href}
               className="font-body text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
-              {link}
-            </a>
+              {link.label}
+            </Link>
           ))}
         </div>
 
@@ -39,14 +45,14 @@ const Navbar = () => {
       {open && (
         <div className="border-t border-border bg-background px-4 pb-4 md:hidden">
           {navLinks.map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
+            <Link
+              key={link.label}
+              to={link.href}
               onClick={() => setOpen(false)}
               className="block py-3 font-body text-sm text-muted-foreground transition-colors hover:text-primary"
             >
-              {link}
-            </a>
+              {link.label}
+            </Link>
           ))}
         </div>
       )}
