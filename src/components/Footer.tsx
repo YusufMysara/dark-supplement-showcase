@@ -1,9 +1,16 @@
 import { Dumbbell } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const Footer = () => {
+  const { ref, isVisible } = useScrollReveal();
+
   return (
-    <footer className="border-t border-border bg-card py-12">
-      <div className="container mx-auto px-4">
+    <footer className="border-t border-border bg-card py-12" ref={ref}>
+      <div
+        className={`container mx-auto px-4 transition-all duration-700 ${
+          isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+        }`}
+      >
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <div className="mb-4 flex items-center gap-2">

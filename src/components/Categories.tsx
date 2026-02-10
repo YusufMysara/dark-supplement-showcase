@@ -1,4 +1,5 @@
 import { Zap, Dumbbell, Heart, Brain } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const categories = [
   { name: "Pre-Workout", icon: Zap, desc: "Explosive energy & focus" },
@@ -8,9 +9,15 @@ const categories = [
 ];
 
 const Categories = () => {
+  const { ref, isVisible } = useScrollReveal();
+
   return (
-    <section id="categories" className="py-20">
-      <div className="container mx-auto px-4">
+    <section id="categories" className="py-20" ref={ref}>
+      <div
+        className={`container mx-auto px-4 transition-all duration-700 ${
+          isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+        }`}
+      >
         <h2 className="mb-2 text-center font-display text-3xl font-bold text-foreground md:text-4xl">
           Shop by <span className="text-primary">Category</span>
         </h2>
@@ -18,10 +25,13 @@ const Categories = () => {
           Find exactly what your body needs
         </p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {categories.map(({ name, icon: Icon, desc }) => (
+          {categories.map(({ name, icon: Icon, desc }, i) => (
             <div
               key={name}
-              className="group cursor-pointer rounded-lg border border-border bg-card p-6 text-center transition-all hover:border-primary/50 hover:bg-secondary"
+              className={`group cursor-pointer rounded-lg border border-border bg-card p-6 text-center transition-all hover:border-primary/50 hover:bg-secondary ${
+                isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+              }`}
+              style={{ transitionDelay: `${i * 100 + 200}ms`, transitionDuration: "500ms" }}
             >
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                 <Icon className="h-6 w-6" />
