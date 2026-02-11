@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,43 +9,7 @@ import { Star, SlidersHorizontal, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
-import productProtein from "@/assets/product-protein.jpg";
-import productPreworkout from "@/assets/product-preworkout.jpg";
-import productBcaa from "@/assets/product-bcaa.jpg";
-import productCreatine from "@/assets/product-creatine.jpg";
-import productVitamins from "@/assets/product-vitamins.jpg";
-import productOmega from "@/assets/product-omega.jpg";
-
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  inStock: boolean;
-  onSale: boolean;
-}
-
-const allProducts: Product[] = [
-  { id: 1, name: "Whey Isolate Pro", category: "Whey Protein", price: 54.99, image: productProtein, rating: 4.8, reviews: 342, inStock: true, onSale: false },
-  { id: 2, name: "Ignite Pre-Workout", category: "Amino", price: 29.99, originalPrice: 39.99, image: productPreworkout, rating: 4.6, reviews: 218, inStock: true, onSale: true },
-  { id: 3, name: "BCAA Recovery", category: "Amino", price: 29.99, image: productBcaa, rating: 4.5, reviews: 156, inStock: true, onSale: false },
-  { id: 4, name: "Creatine Monohydrate", category: "Creatine", price: 24.99, image: productCreatine, rating: 4.9, reviews: 487, inStock: true, onSale: false },
-  { id: 5, name: "Daily Multivitamin", category: "Multivitamin", price: 14.99, originalPrice: 19.99, image: productVitamins, rating: 4.3, reviews: 89, inStock: true, onSale: true },
-  { id: 6, name: "Omega-3 Fish Oil", category: "Multivitamin", price: 22.99, image: productOmega, rating: 4.4, reviews: 134, inStock: false, onSale: false },
-  { id: 7, name: "Mass Gainer Elite", category: "Whey Protein", price: 64.99, image: productProtein, rating: 4.2, reviews: 76, inStock: true, onSale: false },
-  { id: 8, name: "Creatine HCL", category: "Creatine", price: 34.99, originalPrice: 44.99, image: productCreatine, rating: 4.7, reviews: 203, inStock: true, onSale: true },
-  { id: 9, name: "Performance Shorts", category: "Shorts", price: 39.99, image: productBcaa, rating: 4.1, reviews: 45, inStock: true, onSale: false },
-  { id: 10, name: "Training Tee", category: "Shirts", price: 29.99, originalPrice: 34.99, image: productPreworkout, rating: 4.0, reviews: 62, inStock: false, onSale: true },
-  { id: 11, name: "Amino Energy+", category: "Amino", price: 27.99, image: productBcaa, rating: 4.6, reviews: 178, inStock: true, onSale: false },
-  { id: 12, name: "Casein Protein", category: "Whey Protein", price: 49.99, image: productOmega, rating: 4.5, reviews: 112, inStock: true, onSale: false },
-];
-
-const categories = ["Creatine", "Whey Protein", "Amino", "Multivitamin", "Shorts", "Shirts"];
+import { allProducts, categories, type Product } from "@/data/products";
 
 const StarRating = ({ rating, reviews }: { rating: number; reviews: number }) => (
   <div className="flex items-center gap-1.5">
@@ -164,7 +129,7 @@ const FilterSidebar = ({
 );
 
 const ProductCard = ({ product }: { product: Product }) => (
-  <div className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
+  <Link to={`/products/${product.id}`} className="group relative block overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
     {product.onSale && (
       <Badge className="absolute left-3 top-3 z-10 bg-red-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-red-600">
         Sale
@@ -196,7 +161,7 @@ const ProductCard = ({ product }: { product: Product }) => (
         )}
       </div>
     </div>
-  </div>
+  </Link>
 );
 
 const Products = () => {
