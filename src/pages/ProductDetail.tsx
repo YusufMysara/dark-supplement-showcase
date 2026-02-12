@@ -1,15 +1,27 @@
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { allProducts } from "@/data/products";
-import { Star, ArrowLeft, Package, FlaskConical, ChartColumnStacked } from "lucide-react";
+import { useProduct } from "@/hooks/useProducts";
+import { Star, ArrowLeft, Package, FlaskConical, ChartColumnStacked, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const product = allProducts.find((p) => p.id === Number(id));
+  const { data: product, isLoading } = useProduct(id);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto flex min-h-[60vh] items-center justify-center px-4 pt-24">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -28,15 +40,11 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 pt-24 pb-16">
-        {/* Breadcrumb */}
         <Link to="/products" className="mb-8 inline-flex items-center gap-2 font-body text-sm text-muted-foreground transition-colors hover:text-primary">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Products
+          <ArrowLeft className="h-4 w-4" /> Back to Products
         </Link>
 
-        {/* Product hero */}
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
-          {/* Image */}
           <div className="relative overflow-hidden rounded-2xl border border-border bg-secondary">
             {product.onSale && (
               <Badge className="absolute left-4 top-4 z-10 bg-red-500 font-display text-xs font-bold uppercase hover:bg-red-600">Sale</Badge>
@@ -49,12 +57,10 @@ const ProductDetail = () => {
             <img src={product.image} alt={product.name} className="aspect-square w-full object-cover" />
           </div>
 
-          {/* Info */}
           <div className="flex flex-col justify-center">
             <p className="mb-2 font-body text-xs uppercase tracking-widest text-muted-foreground">{product.category}</p>
             <h1 className="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">{product.name}</h1>
 
-            {/* Rating */}
             <div className="mb-6 flex items-center gap-2">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -64,7 +70,6 @@ const ProductDetail = () => {
               <span className="font-body text-sm text-muted-foreground">{product.rating} ({product.reviews} reviews)</span>
             </div>
 
-            {/* Price */}
             <div className="mb-6 flex items-center gap-3">
               <span className="font-display text-3xl font-bold text-primary">${product.price.toFixed(2)}</span>
               {product.originalPrice && (
@@ -77,12 +82,10 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {/* Description */}
             <p className="mb-8 font-body leading-relaxed text-muted-foreground">{product.description}</p>
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="mt-12">
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="mb-6 w-full justify-start gap-1 bg-secondary">
@@ -105,8 +108,7 @@ const ProductDetail = () => {
                 <ul className="grid gap-2 sm:grid-cols-2">
                   {product.ingredients.map((ing, i) => (
                     <li key={i} className="flex items-center gap-2 font-body text-sm text-muted-foreground">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                      {ing}
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" /> {ing}
                     </li>
                   ))}
                 </ul>
