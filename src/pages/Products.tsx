@@ -5,11 +5,13 @@ import Footer from "@/components/Footer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, SlidersHorizontal, X } from "lucide-react";
+import { Star, SlidersHorizontal, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { allProducts, categories, type Product } from "@/data/products";
+import { useProducts, type Product } from "@/hooks/useProducts";
+
+const CATEGORIES = ["Creatine", "Whey Protein", "Amino", "Multivitamin", "Shorts", "Shirts"];
 
 const StarRating = ({ rating, reviews }: { rating: number; reviews: number }) => (
   <div className="flex items-center gap-1.5">
@@ -62,69 +64,51 @@ const FilterSidebar = ({
   popularProducts: Product[];
 }) => (
   <div className="space-y-8">
-    {/* Availability */}
     <div>
       <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Availability</h3>
       <div className="space-y-3">
         <label className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
-          <Checkbox
-            checked={availability.inStock}
-            onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, inStock: !!c }))}
-          />
+          <Checkbox checked={availability.inStock} onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, inStock: !!c }))} />
           In Stock
         </label>
         <label className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
-          <Checkbox
-            checked={availability.outOfStock}
-            onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, outOfStock: !!c }))}
-          />
+          <Checkbox checked={availability.outOfStock} onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, outOfStock: !!c }))} />
           Out of Stock
         </label>
       </div>
     </div>
 
-    {/* Price */}
     <div>
       <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Price</h3>
-      <Slider
-        min={0}
-        max={99}
-        step={1}
-        value={priceRange}
-        onValueChange={setPriceRange}
-        className="mb-3"
-      />
+      <Slider min={0} max={99} step={1} value={priceRange} onValueChange={setPriceRange} className="mb-3" />
       <div className="flex items-center justify-between font-body text-sm text-muted-foreground">
         <span>${priceRange[0]}</span>
         <span>${priceRange[1]}</span>
       </div>
     </div>
 
-    {/* Categories */}
     <div>
       <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Category</h3>
       <div className="space-y-3">
-        {categories.map((cat) => (
+        {CATEGORIES.map((cat) => (
           <label key={cat} className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
-            <Checkbox
-              checked={selectedCategories.includes(cat)}
-              onCheckedChange={() => toggleCategory(cat)}
-            />
+            <Checkbox checked={selectedCategories.includes(cat)} onCheckedChange={() => toggleCategory(cat)} />
             {cat}
           </label>
         ))}
       </div>
     </div>
 
-    {/* Popular Products */}
-    <div>
-      <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Popular Products</h3>
-      <div className="space-y-2">
-        {popularProducts.map((p) => (
-          <PopularProductItem key={p.id} product={p} />
-        ))}
+    {popularProducts.length > 0 && (
+      <div>
+        <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Popular Products</h3>
+        <div className="space-y-2">
+          {popularProducts.map((p) => (
+            <PopularProductItem key={p.id} product={p} />
+          ))}
+        </div>
       </div>
-    </div>
+    )}
   </div>
 );
 
@@ -143,11 +127,7 @@ const ProductCard = ({ product }: { product: Product }) => (
       </div>
     )}
     <div className="flex aspect-square items-center justify-center overflow-hidden bg-secondary p-6">
-      <img
-        src={product.image}
-        alt={product.name}
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
+      <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
     </div>
     <div className="p-4">
       <h3 className="mb-1 font-display text-base font-bold text-foreground">{product.name}</h3>
@@ -155,9 +135,7 @@ const ProductCard = ({ product }: { product: Product }) => (
       <div className="mt-2 flex items-center gap-2">
         <span className="font-display text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
         {product.originalPrice && (
-          <span className="font-body text-sm text-muted-foreground line-through">
-            ${product.originalPrice.toFixed(2)}
-          </span>
+          <span className="font-body text-sm text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
         )}
       </div>
     </div>
@@ -165,6 +143,7 @@ const ProductCard = ({ product }: { product: Product }) => (
 );
 
 const Products = () => {
+  const { data: allProducts = [], isLoading } = useProducts();
   const [availability, setAvailability] = useState({ inStock: true, outOfStock: true });
   const [priceRange, setPriceRange] = useState([0, 99]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -188,21 +167,13 @@ const Products = () => {
     });
 
     switch (sortBy) {
-      case "price-low":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high":
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case "reviews":
-        result.sort((a, b) => b.reviews - a.reviews);
-        break;
+      case "price-low": result.sort((a, b) => a.price - b.price); break;
+      case "price-high": result.sort((a, b) => b.price - a.price); break;
+      case "rating": result.sort((a, b) => b.rating - a.rating); break;
+      case "reviews": result.sort((a, b) => b.reviews - a.reviews); break;
     }
     return result;
-  }, [availability, priceRange, selectedCategories, sortBy]);
+  }, [allProducts, availability, priceRange, selectedCategories, sortBy]);
 
   const sidebarProps = { availability, setAvailability, priceRange, setPriceRange, selectedCategories, toggleCategory, popularProducts };
 
@@ -210,28 +181,22 @@ const Products = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 pt-24 pb-16">
-        {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="font-display text-4xl font-bold tracking-wide text-foreground md:text-5xl">
             ALL <span className="text-primary">ITEMS</span>
           </h1>
         </div>
 
-        {/* Results bar */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            {/* Mobile filter trigger */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="lg:hidden">
-                  <SlidersHorizontal className="mr-2 h-4 w-4" />
-                  Filters
+                  <SlidersHorizontal className="mr-2 h-4 w-4" /> Filters
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-80 overflow-y-auto bg-background">
-                <div className="pt-6">
-                  <FilterSidebar {...sidebarProps} />
-                </div>
+                <div className="pt-6"><FilterSidebar {...sidebarProps} /></div>
               </SheetContent>
             </Sheet>
             <p className="font-body text-sm text-muted-foreground">
@@ -241,9 +206,7 @@ const Products = () => {
           <div className="flex items-center gap-2">
             <span className="font-body text-sm text-muted-foreground">Sort by:</span>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-40 bg-card">
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger className="w-40 bg-card"><SelectValue /></SelectTrigger>
               <SelectContent className="bg-popover">
                 <SelectItem value="featured">Featured</SelectItem>
                 <SelectItem value="price-low">Price: Low to High</SelectItem>
@@ -255,40 +218,31 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Active filters */}
         {selectedCategories.length > 0 && (
           <div className="mb-6 flex flex-wrap items-center gap-2">
             <span className="font-body text-xs text-muted-foreground">Active filters:</span>
             {selectedCategories.map((cat) => (
-              <Badge
-                key={cat}
-                variant="secondary"
-                className="cursor-pointer gap-1 font-body text-xs"
-                onClick={() => toggleCategory(cat)}
-              >
-                {cat}
-                <X className="h-3 w-3" />
+              <Badge key={cat} variant="secondary" className="cursor-pointer gap-1 font-body text-xs" onClick={() => toggleCategory(cat)}>
+                {cat} <X className="h-3 w-3" />
               </Badge>
             ))}
-            <button
-              onClick={() => setSelectedCategories([])}
-              className="font-body text-xs text-primary underline-offset-2 hover:underline"
-            >
+            <button onClick={() => setSelectedCategories([])} className="font-body text-xs text-primary underline-offset-2 hover:underline">
               Clear all
             </button>
           </div>
         )}
 
-        {/* Content */}
         <div className="flex gap-8">
-          {/* Desktop sidebar */}
           <aside className="hidden w-64 shrink-0 lg:block">
             <FilterSidebar {...sidebarProps} />
           </aside>
 
-          {/* Product grid */}
           <div className="flex-1">
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <div className="flex min-h-[300px] items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-border bg-card p-8 text-center">
                 <p className="mb-2 font-display text-xl font-bold text-foreground">No products found</p>
                 <p className="font-body text-sm text-muted-foreground">Try adjusting your filters</p>
