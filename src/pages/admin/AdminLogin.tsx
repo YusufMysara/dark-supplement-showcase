@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,6 +79,11 @@ export default function AdminLogin() {
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
+            <div className="flex justify-center">
+              <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                ← Back to Home
+              </Link>
+            </div>
           </form>
         </CardContent>
       </Card>

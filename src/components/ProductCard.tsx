@@ -1,24 +1,42 @@
+import { useLocation } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import WhatsAppButton from "./WhatsAppButton";
+
 interface ProductCardProps {
+  id: string;
   name: string;
   category: string;
-  price: string;
+  price: number;
+  originalPrice?: number;
   image: string;
-  badge?: string;
+  rating: number;
+  reviews: number;
+  inStock: boolean;
+  onSale: boolean;
+  description: string;
 }
 
-const ProductCard = ({ name, category, price, image, badge }: ProductCardProps) => {
+const ProductCard = ({ id, name, category, price, originalPrice, image, rating, reviews, inStock, onSale, description }: ProductCardProps) => {
+  const location = useLocation();
+  const productUrl = `${window.location.origin}${location.pathname}/${id}`;
+
   return (
     <div className="group relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
-      {badge && (
-        <span className="absolute right-3 top-3 z-10 rounded-sm bg-primary px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
-          {badge}
+      {onSale && (
+        <Badge className="absolute left-3 top-3 z-10 bg-green-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-green-600">
+          Sale
+        </Badge>
+      )}
+      {!inStock && (
+        <span className="absolute left-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">
+          Out of Stock
         </span>
       )}
-      <div className="aspect-square overflow-hidden bg-secondary">
+      <div className="flex aspect-square items-center justify-center overflow-hidden bg-white p-4">
         <img
           src={image}
           alt={name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
         />
       </div>
       <div className="p-4">
@@ -28,7 +46,19 @@ const ProductCard = ({ name, category, price, image, badge }: ProductCardProps) 
         <h3 className="mb-2 font-display text-lg font-semibold text-foreground">
           {name}
         </h3>
-        <p className="font-display text-xl font-bold text-primary">{price}</p>
+        <div className="flex items-center gap-2">
+          <p className="font-display text-xl font-bold text-primary">
+            {price.toFixed(2)} EGP
+          </p>
+          {originalPrice && originalPrice > price && (
+            <p className="font-display text-sm text-muted-foreground line-through">
+              {originalPrice.toFixed(2)} EGP
+            </p>
+          )}
+        </div>
+        <div className="mt-3">
+          <WhatsAppButton productName={name} productPrice={price} productUrl={productUrl} />
+        </div>
       </div>
     </div>
   );

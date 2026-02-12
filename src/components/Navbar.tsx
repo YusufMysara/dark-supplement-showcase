@@ -1,4 +1,4 @@
-import { Dumbbell, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -16,9 +16,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <Dumbbell className="h-7 w-7 text-primary" />
-          <span className="font-display text-xl font-bold tracking-wider text-foreground">
-            FUEL<span className="text-primary">X</span>
+          <span className="font-display text-xl font-bold tracking-wider">
+            <span className="text-primary">CHAMPION</span> <span className="text-white">SUPPLEMENT</span>
           </span>
         </Link>
 

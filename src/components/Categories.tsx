@@ -1,15 +1,17 @@
-import { Zap, Dumbbell, Heart, Brain } from "lucide-react";
+import { Zap, Dumbbell, Heart, Brain, Activity, Shirt } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const categories = [
-  { name: "Pre-Workout", icon: Zap, desc: "Explosive energy & focus" },
-  { name: "Protein", icon: Dumbbell, desc: "Muscle growth & recovery" },
-  { name: "Vitamins", icon: Heart, desc: "Daily health essentials" },
-  { name: "Nootropics", icon: Brain, desc: "Cognitive performance" },
+  { name: "Pre-Workout", icon: Zap, desc: "Explosive energy & focus", category: "Amino" },
+  { name: "Protein", icon: Dumbbell, desc: "Muscle growth & recovery", category: "Whey Protein" },
+  { name: "Vitamins", icon: Heart, desc: "Daily health essentials", category: "Multivitamin" },
+  { name: "Creatine", icon: Activity, desc: "Strength & power", category: "Creatine" },
 ];
 
 const Categories = () => {
   const { ref, isVisible } = useScrollReveal();
+  const [searchParams] = useSearchParams();
 
   return (
     <section id="categories" className="py-20" ref={ref}>
@@ -25,9 +27,10 @@ const Categories = () => {
           Find exactly what your body needs
         </p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {categories.map(({ name, icon: Icon, desc }, i) => (
-            <div
+          {categories.map(({ name, icon: Icon, desc, category }, i) => (
+            <Link
               key={name}
+              to={`/products?category=${encodeURIComponent(category)}`}
               className={`group cursor-pointer rounded-lg border border-border bg-card p-6 text-center transition-all hover:border-primary/50 hover:bg-secondary ${
                 isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
               }`}
@@ -40,7 +43,7 @@ const Categories = () => {
                 {name}
               </h3>
               <p className="font-body text-xs text-muted-foreground">{desc}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

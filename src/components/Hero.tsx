@@ -28,7 +28,7 @@ const Hero = () => {
           <div className="flex animate-fade-in-up gap-4" style={{ animationDelay: "0.3s" }}>
             <a
               href="#products"
-              className="glow-green rounded-sm bg-primary px-8 py-3 font-display text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-all hover:brightness-110"
+              className="glow-red rounded-sm bg-primary px-8 py-3 font-display text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-all hover:brightness-110"
             >
               Shop Now
             </a>

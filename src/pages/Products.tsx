@@ -1,35 +1,18 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, SlidersHorizontal, X, Loader2 } from "lucide-react";
+import { SlidersHorizontal, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useProducts, type Product } from "@/hooks/useProducts";
 
 const CATEGORIES = ["Creatine", "Whey Protein", "Amino", "Multivitamin", "Shorts", "Shirts"];
-
-const StarRating = ({ rating, reviews }: { rating: number; reviews: number }) => (
-  <div className="flex items-center gap-1.5">
-    <div className="flex">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <Star
-          key={star}
-          className={`h-3.5 w-3.5 ${
-            star <= Math.round(rating)
-              ? "fill-amber-400 text-amber-400"
-              : "fill-muted text-muted"
-          }`}
-        />
-      ))}
-    </div>
-    <span className="font-body text-xs text-muted-foreground">({reviews})</span>
-  </div>
-);
+const MAX_PRICE = 5000;
 
 const PopularProductItem = ({ product }: { product: Product }) => (
   <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-2 transition-colors hover:border-primary/30">
@@ -38,10 +21,10 @@ const PopularProductItem = ({ product }: { product: Product }) => (
       <div className="flex items-center gap-1.5">
         <p className="truncate font-display text-sm font-semibold text-foreground">{product.name}</p>
         {product.onSale && (
-          <Badge className="shrink-0 bg-red-500 px-1.5 py-0 text-[10px] hover:bg-red-600">SALE</Badge>
+          <Badge className="shrink-0 bg-green-500 px-1.5 py-0 text-[10px] hover:bg-green-600">SALE</Badge>
         )}
       </div>
-      <p className="font-body text-sm font-bold text-primary">${product.price.toFixed(2)}</p>
+      <p className="font-body text-sm font-bold text-primary">{product.price.toFixed(2)} EGP</p>
     </div>
   </div>
 );
@@ -80,10 +63,10 @@ const FilterSidebar = ({
 
     <div>
       <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Price</h3>
-      <Slider min={0} max={99} step={1} value={priceRange} onValueChange={setPriceRange} className="mb-3" />
+      <Slider min={0} max={MAX_PRICE} step={10} value={priceRange} onValueChange={setPriceRange} className="mb-3" />
       <div className="flex items-center justify-between font-body text-sm text-muted-foreground">
-        <span>${priceRange[0]}</span>
-        <span>${priceRange[1]}</span>
+        <span>{priceRange[0]} EGP</span>
+        <span>{priceRange[1]} EGP</span>
       </div>
     </div>
 
@@ -115,27 +98,24 @@ const FilterSidebar = ({
 const ProductCard = ({ product }: { product: Product }) => (
   <Link to={`/products/${product.id}`} className="group relative block overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
     {product.onSale && (
-      <Badge className="absolute left-3 top-3 z-10 bg-red-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-red-600">
+      <Badge className="absolute left-3 top-3 z-10 bg-green-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-green-600">
         Sale
       </Badge>
     )}
     {!product.inStock && (
-      <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-[2px]">
-        <span className="rounded-md bg-muted px-4 py-1.5 font-display text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          Out of Stock
-        </span>
-      </div>
+      <span className="absolute left-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">
+        Out of Stock
+      </span>
     )}
-    <div className="flex aspect-square items-center justify-center overflow-hidden bg-secondary p-6">
-      <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+    <div className="flex aspect-square items-center justify-center overflow-hidden bg-white p-6">
+      <img src={product.image} alt={product.name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
     </div>
     <div className="p-4">
-      <h3 className="mb-1 font-display text-base font-bold text-foreground">{product.name}</h3>
-      <StarRating rating={product.rating} reviews={product.reviews} />
+      <h3 className="mb-2 font-display text-base font-bold text-foreground">{product.name}</h3>
       <div className="mt-2 flex items-center gap-2">
-        <span className="font-display text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
+        <span className="font-display text-lg font-bold text-primary">{product.price.toFixed(2)} EGP</span>
         {product.originalPrice && (
-          <span className="font-body text-sm text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
+          <span className="font-body text-sm text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
         )}
       </div>
     </div>
@@ -144,10 +124,19 @@ const ProductCard = ({ product }: { product: Product }) => (
 
 const Products = () => {
   const { data: allProducts = [], isLoading } = useProducts();
+  const [searchParams] = useSearchParams();
   const [availability, setAvailability] = useState({ inStock: true, outOfStock: true });
-  const [priceRange, setPriceRange] = useState([0, 99]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("featured");
+  const [priceRange, setPriceRange] = useState<number[]>([0, MAX_PRICE]);
+
+  // Initialize category from URL params
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) {
+      setSelectedCategories([categoryParam]);
+    }
+  }, [searchParams]);
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories((prev) =>
@@ -169,8 +158,6 @@ const Products = () => {
     switch (sortBy) {
       case "price-low": result.sort((a, b) => a.price - b.price); break;
       case "price-high": result.sort((a, b) => b.price - a.price); break;
-      case "rating": result.sort((a, b) => b.rating - a.rating); break;
-      case "reviews": result.sort((a, b) => b.reviews - a.reviews); break;
     }
     return result;
   }, [allProducts, availability, priceRange, selectedCategories, sortBy]);
@@ -211,8 +198,6 @@ const Products = () => {
                 <SelectItem value="featured">Featured</SelectItem>
                 <SelectItem value="price-low">Price: Low to High</SelectItem>
                 <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Top Rated</SelectItem>
-                <SelectItem value="reviews">Most Reviewed</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -84,7 +84,7 @@ export default function AdminProducts() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">{product.name}</TableCell>
-                    <TableCell>${Number(product.price).toFixed(2)}</TableCell>
+                    <TableCell>{Number(product.price).toFixed(2)} EGP</TableCell>
                     <TableCell>{product.stock_quantity}</TableCell>
                     <TableCell>
                       <Badge variant={product.status === "active" ? "default" : "secondary"}>
