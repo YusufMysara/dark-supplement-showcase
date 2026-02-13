@@ -78,7 +78,7 @@ const ProductGrid = () => {
               }`}
               style={{ transitionDelay: `${i * 100 + 200}ms`, transitionDuration: "500ms" }}
             >
-              <Link to={`/products/${product.id}`}>
+              <Link to={`/products/${product.id}`} className="block h-full">
                 <ProductCard {...product} />
               </Link>
             </div>

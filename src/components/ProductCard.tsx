@@ -42,7 +42,7 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, images, 
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
       {onSale && (
         <Badge className="absolute left-3 top-3 z-10 bg-green-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-green-600">
           Sale
@@ -90,14 +90,14 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, images, 
         )}
       </div>
 
-      <div className="p-4">
+      <div className="flex flex-1 flex-col p-4">
         <p className="mb-1 font-body text-xs uppercase tracking-wider text-muted-foreground">
           {category}
         </p>
         <h3 className="mb-2 font-display text-lg font-semibold text-foreground">
           {name}
         </h3>
-        <div className="flex items-center gap-2">
+        <div className="mt-auto flex items-center gap-2">
           <p className="font-display text-xl font-bold text-primary">
             {price.toFixed(2)} EGP
           </p>

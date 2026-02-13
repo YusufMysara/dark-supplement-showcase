@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Upload, X } from "lucide-react";
+import { Loader2, Upload, X, Plus } from "lucide-react";
 
 const CATEGORIES = ["Creatine", "Whey Protein", "Amino", "Multivitamin", "Shorts", "Shirts"];
 
@@ -28,6 +28,11 @@ export default function AdminProductForm() {
   const [fetching, setFetching] = useState(isEditing);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Multi-image state
+  const [additionalImages, setAdditionalImages] = useState<string[]>([]);
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
+  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     name: "",
@@ -64,6 +69,7 @@ export default function AdminProductForm() {
         image_url: data.image_url ?? "",
       });
       setImagePreview(data.image_url ?? null);
+      setAdditionalImages((data.images as string[]) ?? []);
       const nf = data.nutrition_facts as unknown as NutritionFact[] | null;
       if (nf && nf.length > 0) {
         setNutritionFacts(nf);
@@ -86,10 +92,35 @@ export default function AdminProductForm() {
     setForm((f) => ({ ...f, image_url: "" }));
   };
 
+  const handleAdditionalImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setNewImageFiles((prev) => [...prev, ...files]);
+    setNewImagePreviews((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+  };
+
+  const removeAdditionalImage = (index: number) => {
+    setAdditionalImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index: number) => {
+    setNewImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setNewImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const addNutritionFact = () => setNutritionFacts((nf) => [...nf, { label: "", value: "" }]);
   const removeNutritionFact = (i: number) => setNutritionFacts((nf) => nf.filter((_, idx) => idx !== i));
   const updateNutritionFact = (i: number, field: keyof NutritionFact, val: string) =>
     setNutritionFacts((nf) => nf.map((f, idx) => (idx === i ? { ...f, [field]: val } : f)));
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    const ext = file.name.split(".").pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("product-images").upload(path, file);
+    if (error) return null;
+    const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+    return data.publicUrl;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,19 +132,23 @@ export default function AdminProductForm() {
 
     let imageUrl = form.image_url;
 
-    // Upload image if new file selected
     if (imageFile) {
-      const ext = imageFile.name.split(".").pop();
-      const path = `${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("product-images").upload(path, imageFile);
-      if (uploadError) {
-        toast({ title: "Image upload failed", description: uploadError.message, variant: "destructive" });
+      const url = await uploadFile(imageFile);
+      if (!url) {
+        toast({ title: "Main image upload failed", variant: "destructive" });
         setLoading(false);
         return;
       }
-      const { data: publicData } = supabase.storage.from("product-images").getPublicUrl(path);
-      imageUrl = publicData.publicUrl;
+      imageUrl = url;
     }
+
+    // Upload new additional images
+    const uploadedUrls: string[] = [];
+    for (const file of newImageFiles) {
+      const url = await uploadFile(file);
+      if (url) uploadedUrls.push(url);
+    }
+    const allImages = [...additionalImages, ...uploadedUrls];
 
     const ingredients = form.ingredients.split(",").map((s) => s.trim()).filter(Boolean);
     const validNF = nutritionFacts.filter((nf) => nf.label.trim() && nf.value.trim());
@@ -129,6 +164,7 @@ export default function AdminProductForm() {
       stock_quantity: parseInt(form.stock_quantity) || 0,
       status: form.status,
       image_url: imageUrl || null,
+      images: allImages,
     };
 
     let error;
@@ -211,7 +247,7 @@ export default function AdminProductForm() {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle className="text-lg">Product Image</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-lg">Main Image</CardTitle></CardHeader>
             <CardContent>
               {imagePreview ? (
                 <div className="relative inline-block">
@@ -226,6 +262,44 @@ export default function AdminProductForm() {
                   <span className="text-xs">Upload Image</span>
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                 </label>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Additional Images</CardTitle>
+                <label className="cursor-pointer">
+                  <Button type="button" variant="outline" size="sm" asChild>
+                    <span><Plus className="mr-1 h-4 w-4" /> Add Images</span>
+                  </Button>
+                  <input type="file" accept="image/*" multiple className="hidden" onChange={handleAdditionalImages} />
+                </label>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {additionalImages.length === 0 && newImagePreviews.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No additional images. Click "Add Images" to upload.</p>
+              ) : (
+                <div className="flex flex-wrap gap-3">
+                  {additionalImages.map((url, i) => (
+                    <div key={`existing-${i}`} className="relative">
+                      <img src={url} alt={`Additional ${i + 1}`} className="h-24 w-24 rounded-lg object-cover border border-border" />
+                      <button type="button" onClick={() => removeAdditionalImage(i)} className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {newImagePreviews.map((url, i) => (
+                    <div key={`new-${i}`} className="relative">
+                      <img src={url} alt={`New ${i + 1}`} className="h-24 w-24 rounded-lg object-cover border border-border" />
+                      <button type="button" onClick={() => removeNewImage(i)} className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               )}
             </CardContent>
           </Card>
