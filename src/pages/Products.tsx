@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SlidersHorizontal, X, Loader2 } from "lucide-react";
+import { SlidersHorizontal, X, Loader2, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -95,32 +95,51 @@ const FilterSidebar = ({
   </div>
 );
 
-const ProductCard = ({ product }: { product: Product }) => (
-  <Link to={`/products/${product.id}`} className="group relative block overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
-    {product.onSale && (
-      <Badge className="absolute left-3 top-3 z-10 bg-green-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-green-600">
-        Sale
-      </Badge>
-    )}
-    {!product.inStock && (
-      <span className="absolute left-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">
-        Out of Stock
-      </span>
-    )}
-    <div className="flex aspect-square items-center justify-center overflow-hidden bg-white p-6">
-      <img src={product.image} alt={product.name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
-    </div>
-    <div className="p-4">
-      <h3 className="mb-2 font-display text-base font-bold text-foreground">{product.name}</h3>
-      <div className="mt-2 flex items-center gap-2">
-        <span className="font-display text-lg font-bold text-primary">{product.price.toFixed(2)} EGP</span>
-        {product.originalPrice && (
-          <span className="font-body text-sm text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
+const ProductListCard = ({ product }: { product: Product }) => {
+  const productUrl = `${window.location.origin}/products/${product.id}`;
+  const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const message = `Hello, I want to order: ${product.name} - ${productUrl}`;
+  const whatsappUrl = `https://wa.me/201120011390?text=${encodeURIComponent(message)}`;
+
+  const prevSlide = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex((p) => (p === 0 ? allImages.length - 1 : p - 1)); };
+  const nextSlide = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex((p) => (p === allImages.length - 1 ? 0 : p + 1)); };
+
+  return (
+    <Link to={`/products/${product.id}`} className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
+      {product.onSale && (
+        <Badge className="absolute left-3 top-3 z-10 bg-green-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-green-600">Sale</Badge>
+      )}
+      {!product.inStock && (
+        <span className="absolute left-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">Out of Stock</span>
+      )}
+      <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white p-6">
+        <img src={allImages[currentIndex]} alt={product.name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+        {allImages.length > 1 && (
+          <>
+            <button onClick={prevSlide} className="absolute left-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></button>
+            <button onClick={nextSlide} className="absolute right-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100" aria-label="Next"><ChevronRight className="h-4 w-4" /></button>
+            <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+              {allImages.map((_, i) => (<span key={i} className={`h-1.5 w-1.5 rounded-full transition-colors ${i === currentIndex ? "bg-primary" : "bg-foreground/30"}`} />))}
+            </div>
+          </>
         )}
       </div>
-    </div>
-  </Link>
-);
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="mb-2 font-display text-base font-bold text-foreground">{product.name}</h3>
+        <div className="mt-auto flex items-center gap-2">
+          <span className="font-display text-lg font-bold text-primary">{product.price.toFixed(2)} EGP</span>
+          {product.originalPrice && (
+            <span className="font-body text-sm text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
+          )}
+        </div>
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
+          <MessageCircle className="h-5 w-5" /> Order on WhatsApp
+        </a>
+      </div>
+    </Link>
+  );
+};
 
 const Products = () => {
   const { data: allProducts = [], isLoading } = useProducts();
@@ -235,7 +254,7 @@ const Products = () => {
             ) : (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {filtered.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductListCard key={product.id} product={product} />
                 ))}
               </div>
             )}
