@@ -8,6 +8,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   image: string;
+  images: string[];
   rating: number;
   reviews: number;
   inStock: boolean;
@@ -26,6 +27,7 @@ function mapProduct(row: any): Product {
     price: Number(row.price),
     originalPrice: row.original_price ? Number(row.original_price) : undefined,
     image: row.image_url ?? "/placeholder.svg",
+    images: row.images ?? [],
     rating: Number(row.rating ?? 0),
     reviews: Number(row.reviews ?? 0),
     inStock: row.stock_quantity > 0,
