@@ -22,6 +22,7 @@ export type Database = {
           id: string
           image_url: string | null
           ingredients: string[] | null
+          is_featured: boolean
           name: string
           nutrition_facts: Json | null
           original_price: number | null
@@ -39,6 +40,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           ingredients?: string[] | null
+          is_featured?: boolean
           name: string
           nutrition_facts?: Json | null
           original_price?: number | null
@@ -56,6 +58,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           ingredients?: string[] | null
+          is_featured?: boolean
           name?: string
           nutrition_facts?: Json | null
           original_price?: number | null
