@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import WhatsAppButton from "./WhatsAppButton";
+import { ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
 
 interface ProductCardProps {
   id: string;
@@ -9,6 +10,7 @@ interface ProductCardProps {
   price: number;
   originalPrice?: number;
   image: string;
+  images?: string[];
   rating: number;
   reviews: number;
   inStock: boolean;
@@ -16,9 +18,28 @@ interface ProductCardProps {
   description: string;
 }
 
-const ProductCard = ({ id, name, category, price, originalPrice, image, rating, reviews, inStock, onSale, description }: ProductCardProps) => {
+const WHATSAPP_NUMBER = "+201120011390";
+
+const ProductCard = ({ id, name, category, price, originalPrice, image, images, rating, reviews, inStock, onSale, description }: ProductCardProps) => {
   const location = useLocation();
-  const productUrl = `${window.location.origin}${location.pathname}/${id}`;
+  const productUrl = `${window.location.origin}/products/${id}`;
+  const allImages = images && images.length > 0 ? images : [image];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const message = `Hello, I want to order: ${name} - ${productUrl}`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\s/g, "")}?text=${encodeURIComponent(message)}`;
+
+  const prevSlide = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const nextSlide = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <div className="group relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
@@ -32,13 +53,43 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, rating, 
           Out of Stock
         </span>
       )}
-      <div className="flex aspect-square items-center justify-center overflow-hidden bg-white p-4">
+
+      {/* Image Carousel */}
+      <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white p-4">
         <img
-          src={image}
-          alt={name}
+          src={allImages[currentIndex]}
+          alt={`${name} - image ${currentIndex + 1}`}
           className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
         />
+
+        {allImages.length > 1 && (
+          <>
+            <button
+              onClick={prevSlide}
+              className="absolute left-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100"
+              aria-label="Next image"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+              {allImages.map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1.5 w-1.5 rounded-full transition-colors ${i === currentIndex ? "bg-primary" : "bg-foreground/30"}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
+
       <div className="p-4">
         <p className="mb-1 font-body text-xs uppercase tracking-wider text-muted-foreground">
           {category}
@@ -57,7 +108,16 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, rating, 
           )}
         </div>
         <div className="mt-3">
-          <WhatsAppButton productName={name} productPrice={price} productUrl={productUrl} />
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]"
+          >
+            <MessageCircle className="h-5 w-5" />
+            <span>Order on WhatsApp</span>
+          </a>
         </div>
       </div>
     </div>

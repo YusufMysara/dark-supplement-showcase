@@ -8,8 +8,8 @@ interface WhatsAppButtonProps {
   phoneNumber?: string;
 }
 
-const WhatsAppButton = ({ productName, productPrice, productUrl, phoneNumber = "+201234567890" }: WhatsAppButtonProps) => {
-  const message = `Hi, I'm interested in this product. Please share more details.\n\nProduct: ${productName}\nPrice: ${productPrice} EGP\nLink: ${productUrl}`;
+const WhatsAppButton = ({ productName, productPrice, productUrl, phoneNumber = "+201120011390" }: WhatsAppButtonProps) => {
+  const message = `Hello, I want to order: ${productName} - ${productUrl}`;
   
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
