@@ -107,7 +107,7 @@ const ProductListCard = ({ product }: { product: Product }) => {
       {!product.inStock && (
         <span className="absolute start-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">{t("products.outOfStock")}</span>
       )}
-      <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white p-6">
+      <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white p-2 sm:p-6">
         <img src={allImages[currentIndex]} alt={product.name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
         {allImages.length > 1 && (
           <>
@@ -119,16 +119,16 @@ const ProductListCard = ({ product }: { product: Product }) => {
           </>
         )}
       </div>
-      <div className="flex flex-1 flex-col p-4">
-        <h3 className="mb-2 font-display text-base font-bold text-foreground">{product.name}</h3>
-        <div className="mt-auto flex items-center gap-2">
-          <span className="font-display text-lg font-bold text-primary">{product.price.toFixed(2)} EGP</span>
+      <div className="flex flex-1 flex-col p-2 sm:p-4">
+        <h3 className="mb-1 sm:mb-2 font-display text-sm sm:text-base font-bold text-foreground line-clamp-2">{product.name}</h3>
+        <div className="mt-auto flex flex-wrap items-center gap-1 sm:gap-2">
+          <span className="font-display text-sm sm:text-lg font-bold text-primary">{product.price.toFixed(2)} EGP</span>
           {product.originalPrice && (
-            <span className="font-body text-sm text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
+            <span className="font-body text-[10px] sm:text-sm text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
           )}
         </div>
-        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
-          <MessageCircle className="h-5 w-5" /> {t("products.orderWhatsApp")}
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-2 sm:mt-3 flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg bg-[#25D366] px-2 sm:px-4 py-1.5 sm:py-2 font-display text-[10px] sm:text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
+          <MessageCircle className="h-3.5 w-3.5 sm:h-5 sm:w-5" /> {t("products.orderWhatsApp")}
         </a>
       </div>
     </Link>
@@ -237,7 +237,7 @@ const Products = () => {
                 <p className="font-body text-sm text-muted-foreground">{t("products.noProductsHint")}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-3">
                 {filtered.map((product) => (<ProductListCard key={product.id} product={product} />))}
               </div>
             )}
