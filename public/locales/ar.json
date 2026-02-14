@@ -42,7 +42,9 @@
     "sale": "تخفيض",
     "outOfStock": "نفذت الكمية",
     "orderWhatsApp": "اطلب عبر واتساب",
-    "filters": "الفلاتر"
+    "filters": "الفلاتر",
+    "backToProducts": "العودة إلى المنتجات",
+    "productNotFound": "المنتج غير موجود"
   },
   "filter": {
     "availability": "التوفر",

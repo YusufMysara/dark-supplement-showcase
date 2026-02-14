@@ -42,7 +42,9 @@
     "sale": "Sale",
     "outOfStock": "Out of Stock",
     "orderWhatsApp": "Order on WhatsApp",
-    "filters": "Filters"
+    "filters": "Filters",
+    "backToProducts": "Back to Products",
+    "productNotFound": "Product Not Found"
   },
   "filter": {
     "availability": "Availability",
