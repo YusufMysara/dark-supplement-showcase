@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "products": "المنتجات",
+    "categories": "الفئات",
+    "about": "من نحن",
+    "contact": "اتصل بنا"
+  },
+  "hero": {
+    "shopNow": "تسوق الآن",
+    "explore": "استكشف"
+  },
+  "categories": {
+    "title": "تسوق حسب",
+    "titleHighlight": "الفئة",
+    "subtitle": "اعثر على ما يحتاجه جسمك بالضبط",
+    "preWorkout": "قبل التمرين",
+    "preWorkoutDesc": "طاقة وتركيز انفجاريان",
+    "protein": "بروتين",
+    "proteinDesc": "نمو العضلات والتعافي",
+    "vitamins": "فيتامينات",
+    "vitaminsDesc": "أساسيات الصحة اليومية",
+    "creatine": "كرياتين",
+    "creatineDesc": "قوة وطاقة"
+  },
+  "products": {
+    "featuredTitle": "المنتجات",
+    "featuredHighlight": "المميزة",
+    "featuredSubtitle": "موثوق بها من قبل آلاف الرياضيين حول العالم",
+    "viewAll": "عرض جميع المنتجات",
+    "allItems": "جميع",
+    "allItemsHighlight": "المنتجات",
+    "showing": "عرض",
+    "results": "نتيجة",
+    "sortBy": "ترتيب حسب:",
+    "featured": "مميز",
+    "priceLow": "السعر: من الأقل إلى الأعلى",
+    "priceHigh": "السعر: من الأعلى إلى الأقل",
+    "activeFilters": "الفلاتر النشطة:",
+    "clearAll": "مسح الكل",
+    "noProducts": "لم يتم العثور على منتجات",
+    "noProductsHint": "حاول تعديل الفلاتر",
+    "sale": "تخفيض",
+    "outOfStock": "نفذت الكمية",
+    "orderWhatsApp": "اطلب عبر واتساب",
+    "filters": "الفلاتر"
+  },
+  "filter": {
+    "availability": "التوفر",
+    "inStock": "متوفر",
+    "outOfStock": "نفذت الكمية",
+    "price": "السعر",
+    "category": "الفئة",
+    "popularProducts": "المنتجات الشائعة"
+  },
+  "footer": {
+    "tagline": "تغذية أداء متميزة للرياضيين الذين يطلبون النتائج.",
+    "quickLinks": "روابط سريعة",
+    "contact": "اتصل بنا",
+    "rights": "© 2026 CHAMPION SUPPLEMENT. جميع الحقوق محفوظة.",
+    "errorLoading": "خطأ في تحميل المنتجات. يرجى المحاولة مرة أخرى لاحقاً."
+  }
+}

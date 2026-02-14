@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useProducts, type Product } from "@/hooks/useProducts";
+import { useTranslation } from "react-i18next";
 
 const CATEGORIES = ["Creatine", "Whey Protein", "Amino", "Multivitamin", "Shorts", "Shirts"];
 const MAX_PRICE = 5000;
@@ -30,13 +31,7 @@ const PopularProductItem = ({ product }: { product: Product }) => (
 );
 
 const FilterSidebar = ({
-  availability,
-  setAvailability,
-  priceRange,
-  setPriceRange,
-  selectedCategories,
-  toggleCategory,
-  popularProducts,
+  availability, setAvailability, priceRange, setPriceRange, selectedCategories, toggleCategory, popularProducts,
 }: {
   availability: { inStock: boolean; outOfStock: boolean };
   setAvailability: React.Dispatch<React.SetStateAction<{ inStock: boolean; outOfStock: boolean }>>;
@@ -45,57 +40,56 @@ const FilterSidebar = ({
   selectedCategories: string[];
   toggleCategory: (cat: string) => void;
   popularProducts: Product[];
-}) => (
-  <div className="space-y-8">
-    <div>
-      <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Availability</h3>
-      <div className="space-y-3">
-        <label className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
-          <Checkbox checked={availability.inStock} onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, inStock: !!c }))} />
-          In Stock
-        </label>
-        <label className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
-          <Checkbox checked={availability.outOfStock} onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, outOfStock: !!c }))} />
-          Out of Stock
-        </label>
-      </div>
-    </div>
-
-    <div>
-      <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Price</h3>
-      <Slider min={0} max={MAX_PRICE} step={10} value={priceRange} onValueChange={setPriceRange} className="mb-3" />
-      <div className="flex items-center justify-between font-body text-sm text-muted-foreground">
-        <span>{priceRange[0]} EGP</span>
-        <span>{priceRange[1]} EGP</span>
-      </div>
-    </div>
-
-    <div>
-      <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Category</h3>
-      <div className="space-y-3">
-        {CATEGORIES.map((cat) => (
-          <label key={cat} className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
-            <Checkbox checked={selectedCategories.includes(cat)} onCheckedChange={() => toggleCategory(cat)} />
-            {cat}
-          </label>
-        ))}
-      </div>
-    </div>
-
-    {popularProducts.length > 0 && (
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="space-y-8">
       <div>
-        <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">Popular Products</h3>
-        <div className="space-y-2">
-          {popularProducts.map((p) => (
-            <PopularProductItem key={p.id} product={p} />
+        <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">{t("filter.availability")}</h3>
+        <div className="space-y-3">
+          <label className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
+            <Checkbox checked={availability.inStock} onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, inStock: !!c }))} />
+            {t("filter.inStock")}
+          </label>
+          <label className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
+            <Checkbox checked={availability.outOfStock} onCheckedChange={(c) => setAvailability((prev) => ({ ...prev, outOfStock: !!c }))} />
+            {t("filter.outOfStock")}
+          </label>
+        </div>
+      </div>
+      <div>
+        <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">{t("filter.price")}</h3>
+        <Slider min={0} max={MAX_PRICE} step={10} value={priceRange} onValueChange={setPriceRange} className="mb-3" />
+        <div className="flex items-center justify-between font-body text-sm text-muted-foreground">
+          <span>{priceRange[0]} EGP</span>
+          <span>{priceRange[1]} EGP</span>
+        </div>
+      </div>
+      <div>
+        <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">{t("filter.category")}</h3>
+        <div className="space-y-3">
+          {CATEGORIES.map((cat) => (
+            <label key={cat} className="flex cursor-pointer items-center gap-3 font-body text-sm text-muted-foreground hover:text-foreground">
+              <Checkbox checked={selectedCategories.includes(cat)} onCheckedChange={() => toggleCategory(cat)} />
+              {cat}
+            </label>
           ))}
         </div>
       </div>
-    )}
-  </div>
-);
+      {popularProducts.length > 0 && (
+        <div>
+          <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-wider text-foreground">{t("filter.popularProducts")}</h3>
+          <div className="space-y-2">
+            {popularProducts.map((p) => (<PopularProductItem key={p.id} product={p} />))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ProductListCard = ({ product }: { product: Product }) => {
+  const { t } = useTranslation();
   const productUrl = `${window.location.origin}/products/${product.id}`;
   const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -108,17 +102,17 @@ const ProductListCard = ({ product }: { product: Product }) => {
   return (
     <Link to={`/products/${product.id}`} className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
       {product.onSale && (
-        <Badge className="absolute left-3 top-3 z-10 bg-green-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-green-600">Sale</Badge>
+        <Badge className="absolute start-3 top-3 z-10 bg-green-500 font-display text-[10px] font-bold uppercase tracking-wider hover:bg-green-600">{t("products.sale")}</Badge>
       )}
       {!product.inStock && (
-        <span className="absolute left-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">Out of Stock</span>
+        <span className="absolute start-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">{t("products.outOfStock")}</span>
       )}
       <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white p-6">
         <img src={allImages[currentIndex]} alt={product.name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
         {allImages.length > 1 && (
           <>
-            <button onClick={prevSlide} className="absolute left-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></button>
-            <button onClick={nextSlide} className="absolute right-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100" aria-label="Next"><ChevronRight className="h-4 w-4" /></button>
+            <button onClick={prevSlide} className="absolute start-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></button>
+            <button onClick={nextSlide} className="absolute end-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100" aria-label="Next"><ChevronRight className="h-4 w-4" /></button>
             <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
               {allImages.map((_, i) => (<span key={i} className={`h-1.5 w-1.5 rounded-full transition-colors ${i === currentIndex ? "bg-primary" : "bg-foreground/30"}`} />))}
             </div>
@@ -134,7 +128,7 @@ const ProductListCard = ({ product }: { product: Product }) => {
           )}
         </div>
         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
-          <MessageCircle className="h-5 w-5" /> Order on WhatsApp
+          <MessageCircle className="h-5 w-5" /> {t("products.orderWhatsApp")}
         </a>
       </div>
     </Link>
@@ -142,6 +136,7 @@ const ProductListCard = ({ product }: { product: Product }) => {
 };
 
 const Products = () => {
+  const { t } = useTranslation();
   const { data: allProducts = [], isLoading } = useProducts();
   const [searchParams] = useSearchParams();
   const [availability, setAvailability] = useState({ inStock: true, outOfStock: true });
@@ -149,18 +144,13 @@ const Products = () => {
   const [sortBy, setSortBy] = useState("featured");
   const [priceRange, setPriceRange] = useState<number[]>([0, MAX_PRICE]);
 
-  // Initialize category from URL params
   useEffect(() => {
     const categoryParam = searchParams.get("category");
-    if (categoryParam) {
-      setSelectedCategories([categoryParam]);
-    }
+    if (categoryParam) setSelectedCategories([categoryParam]);
   }, [searchParams]);
 
   const toggleCategory = (cat: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
-    );
+    setSelectedCategories((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]);
   };
 
   const popularProducts = allProducts.filter((p) => p.reviews > 150).slice(0, 4);
@@ -173,7 +163,6 @@ const Products = () => {
       if (selectedCategories.length > 0 && !selectedCategories.includes(p.category)) return false;
       return true;
     });
-
     switch (sortBy) {
       case "price-low": result.sort((a, b) => a.price - b.price); break;
       case "price-high": result.sort((a, b) => b.price - a.price); break;
@@ -189,16 +178,15 @@ const Products = () => {
       <main className="container mx-auto px-4 pt-24 pb-16">
         <div className="mb-8 text-center">
           <h1 className="font-display text-4xl font-bold tracking-wide text-foreground md:text-5xl">
-            ALL <span className="text-primary">ITEMS</span>
+            {t("products.allItems")} <span className="text-primary">{t("products.allItemsHighlight")}</span>
           </h1>
         </div>
-
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="lg:hidden">
-                  <SlidersHorizontal className="mr-2 h-4 w-4" /> Filters
+                  <SlidersHorizontal className="me-2 h-4 w-4" /> {t("products.filters")}
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-80 overflow-y-auto bg-background">
@@ -206,41 +194,38 @@ const Products = () => {
               </SheetContent>
             </Sheet>
             <p className="font-body text-sm text-muted-foreground">
-              Showing <span className="font-semibold text-foreground">{filtered.length}</span> Results
+              {t("products.showing")} <span className="font-semibold text-foreground">{filtered.length}</span> {t("products.results")}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-body text-sm text-muted-foreground">Sort by:</span>
+            <span className="font-body text-sm text-muted-foreground">{t("products.sortBy")}</span>
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-40 bg-card"><SelectValue /></SelectTrigger>
               <SelectContent className="bg-popover">
-                <SelectItem value="featured">Featured</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
+                <SelectItem value="featured">{t("products.featured")}</SelectItem>
+                <SelectItem value="price-low">{t("products.priceLow")}</SelectItem>
+                <SelectItem value="price-high">{t("products.priceHigh")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
-
         {selectedCategories.length > 0 && (
           <div className="mb-6 flex flex-wrap items-center gap-2">
-            <span className="font-body text-xs text-muted-foreground">Active filters:</span>
+            <span className="font-body text-xs text-muted-foreground">{t("products.activeFilters")}</span>
             {selectedCategories.map((cat) => (
               <Badge key={cat} variant="secondary" className="cursor-pointer gap-1 font-body text-xs" onClick={() => toggleCategory(cat)}>
                 {cat} <X className="h-3 w-3" />
               </Badge>
             ))}
             <button onClick={() => setSelectedCategories([])} className="font-body text-xs text-primary underline-offset-2 hover:underline">
-              Clear all
+              {t("products.clearAll")}
             </button>
           </div>
         )}
-
         <div className="flex gap-8">
           <aside className="hidden w-64 shrink-0 lg:block">
             <FilterSidebar {...sidebarProps} />
           </aside>
-
           <div className="flex-1">
             {isLoading ? (
               <div className="flex min-h-[300px] items-center justify-center">
@@ -248,14 +233,12 @@ const Products = () => {
               </div>
             ) : filtered.length === 0 ? (
               <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-border bg-card p-8 text-center">
-                <p className="mb-2 font-display text-xl font-bold text-foreground">No products found</p>
-                <p className="font-body text-sm text-muted-foreground">Try adjusting your filters</p>
+                <p className="mb-2 font-display text-xl font-bold text-foreground">{t("products.noProducts")}</p>
+                <p className="font-body text-sm text-muted-foreground">{t("products.noProductsHint")}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {filtered.map((product) => (
-                  <ProductListCard key={product.id} product={product} />
-                ))}
+                {filtered.map((product) => (<ProductListCard key={product.id} product={product} />))}
               </div>
             )}
           </div>

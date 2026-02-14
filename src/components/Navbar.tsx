@@ -1,23 +1,26 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
-const navLinks = [
-  { label: "Products", href: "/products" },
-  { label: "Categories", href: "/#categories" },
-  { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
-];
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "./LanguageToggle";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+
+  const navLinks = [
+    { label: t("nav.products"), href: "/products" },
+    { label: t("nav.categories"), href: "/#categories" },
+    { label: t("nav.about"), href: "/#about" },
+    { label: t("nav.contact"), href: "/#contact" },
+  ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <span className="font-display text-xl font-bold tracking-wider">
-            <span className="text-primary">CHAMPION</span> <span className="text-white">SUPPLEMENT</span>
+            <span className="text-primary">CHAMPION</span> <span className="text-foreground">SUPPLEMENT</span>
           </span>
         </Link>
 
@@ -31,14 +34,15 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+          <LanguageToggle />
         </div>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="text-foreground md:hidden"
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-3 md:hidden">
+          <LanguageToggle />
+          <button onClick={() => setOpen(!open)} className="text-foreground">
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {open && (
