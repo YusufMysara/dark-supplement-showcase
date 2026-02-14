@@ -62,18 +62,18 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, images, 
           </>
         )}
       </div>
-      <div className="flex flex-1 flex-col p-4">
-        <p className="mb-1 font-body text-xs uppercase tracking-wider text-muted-foreground">{category}</p>
-        <h3 className="mb-2 font-display text-lg font-semibold text-foreground">{name}</h3>
-        <div className="mt-auto flex items-center gap-2">
-          <p className="font-display text-xl font-bold text-primary">{price.toFixed(2)} EGP</p>
+      <div className="flex flex-1 flex-col p-2 sm:p-4">
+        <p className="mb-0.5 font-body text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">{category}</p>
+        <h3 className="mb-1 sm:mb-2 font-display text-sm sm:text-lg font-semibold text-foreground line-clamp-2">{name}</h3>
+        <div className="mt-auto flex flex-wrap items-center gap-1 sm:gap-2">
+          <p className="font-display text-sm sm:text-xl font-bold text-primary">{price.toFixed(2)} EGP</p>
           {originalPrice && originalPrice > price && (
-            <p className="font-display text-sm text-muted-foreground line-through">{originalPrice.toFixed(2)} EGP</p>
+            <p className="font-display text-[10px] sm:text-sm text-muted-foreground line-through">{originalPrice.toFixed(2)} EGP</p>
           )}
         </div>
-        <div className="mt-3">
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
-            <MessageCircle className="h-5 w-5" />
+        <div className="mt-2 sm:mt-3">
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg bg-[#25D366] px-2 sm:px-4 py-1.5 sm:py-2 font-display text-[10px] sm:text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
+            <MessageCircle className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             <span>{t("products.orderWhatsApp")}</span>
           </a>
         </div>

@@ -20,7 +20,7 @@ const ProductGrid = () => {
             </h2>
             <p className="mb-12 text-center font-body text-muted-foreground">{t("products.featuredSubtitle")}</p>
           </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className={`transition-all ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`} style={{ transitionDelay: `${i * 100 + 200}ms`, transitionDuration: "500ms" }}>
                 <Skeleton className="h-[300px] w-full rounded-lg" />
@@ -51,7 +51,7 @@ const ProductGrid = () => {
           </h2>
           <p className="mb-12 text-center font-body text-muted-foreground">{t("products.featuredSubtitle")}</p>
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
           {products?.slice(0, 6).map((product, i) => (
             <div key={product.id} className={`transition-all ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`} style={{ transitionDelay: `${i * 100 + 200}ms`, transitionDuration: "500ms" }}>
               <Link to={`/products/${product.id}`} className="block h-full">
