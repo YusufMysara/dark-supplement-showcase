@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "products": "Products",
+    "categories": "Categories",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "shopNow": "Shop Now",
+    "explore": "Explore"
+  },
+  "categories": {
+    "title": "Shop by",
+    "titleHighlight": "Category",
+    "subtitle": "Find exactly what your body needs",
+    "preWorkout": "Pre-Workout",
+    "preWorkoutDesc": "Explosive energy & focus",
+    "protein": "Protein",
+    "proteinDesc": "Muscle growth & recovery",
+    "vitamins": "Vitamins",
+    "vitaminsDesc": "Daily health essentials",
+    "creatine": "Creatine",
+    "creatineDesc": "Strength & power"
+  },
+  "products": {
+    "featuredTitle": "Featured",
+    "featuredHighlight": "Products",
+    "featuredSubtitle": "Trusted by thousands of athletes worldwide",
+    "viewAll": "View All Products",
+    "allItems": "ALL",
+    "allItemsHighlight": "ITEMS",
+    "showing": "Showing",
+    "results": "Results",
+    "sortBy": "Sort by:",
+    "featured": "Featured",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low",
+    "activeFilters": "Active filters:",
+    "clearAll": "Clear all",
+    "noProducts": "No products found",
+    "noProductsHint": "Try adjusting your filters",
+    "sale": "Sale",
+    "outOfStock": "Out of Stock",
+    "orderWhatsApp": "Order on WhatsApp",
+    "filters": "Filters"
+  },
+  "filter": {
+    "availability": "Availability",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "price": "Price",
+    "category": "Category",
+    "popularProducts": "Popular Products"
+  },
+  "footer": {
+    "tagline": "Premium performance nutrition for athletes who demand results.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "rights": "© 2026 CHAMPION SUPPLEMENT. All rights reserved.",
+    "errorLoading": "Error loading products. Please try again later."
+  }
+}
