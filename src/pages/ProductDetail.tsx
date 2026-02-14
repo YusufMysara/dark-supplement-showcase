@@ -40,13 +40,13 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 pt-24 pb-16">
-        <Link to="/products" className="mb-8 inline-flex items-center gap-2 font-body text-sm text-muted-foreground transition-colors hover:text-primary">
-          <ArrowLeft className="h-4 w-4" /> Back to Products
+      <main className="container mx-auto px-3 pt-20 pb-12 md:px-4 md:pt-24 md:pb-16">
+        <Link to="/products" className="mb-4 md:mb-8 inline-flex items-center gap-1.5 font-body text-xs md:text-sm text-muted-foreground transition-colors hover:text-primary md:gap-2">
+          <ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" /> Back to Products
         </Link>
 
-        <div className="mt-6 grid gap-10 lg:grid-cols-2">
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-white">
+        <div className="mt-4 md:mt-6 grid gap-6 md:gap-10 lg:grid-cols-2">
+          <div className="relative overflow-hidden rounded-xl md:rounded-2xl border border-border bg-white">
             {product.onSale && (
               <Badge className="absolute left-4 top-4 z-10 bg-green-500 font-display text-xs font-bold uppercase hover:bg-green-600">Sale</Badge>
             )}
@@ -59,24 +59,24 @@ const ProductDetail = () => {
           </div>
 
           <div className="flex flex-col justify-center">
-            <p className="mb-2 font-body text-xs uppercase tracking-widest text-muted-foreground">{product.category}</p>
-            <h1 className="mb-4 font-display text-3xl font-bold text-foreground md:text-4xl">{product.name}</h1>
+            <p className="mb-1.5 md:mb-2 font-body text-[10px] uppercase tracking-widest text-muted-foreground md:text-xs">{product.category}</p>
+            <h1 className="mb-3 md:mb-4 font-display text-xl md:text-3xl lg:text-4xl font-bold text-foreground">{product.name}</h1>
 
-            <div className="mb-6 flex items-center gap-3">
-              <span className="font-display text-3xl font-bold text-primary">{product.price.toFixed(2)} EGP</span>
+            <div className="mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
+              <span className="font-display text-xl md:text-3xl font-bold text-primary">{product.price.toFixed(2)} EGP</span>
               {product.originalPrice && (
-                <span className="font-body text-lg text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
+                <span className="font-body text-sm md:text-lg text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
               )}
               {product.onSale && product.originalPrice && (
-                <Badge variant="secondary" className="font-display text-xs">
+                <Badge variant="secondary" className="font-display text-[10px] md:text-xs">
                   Save {(product.originalPrice - product.price).toFixed(2)} EGP
                 </Badge>
               )}
             </div>
 
-            <p className="mb-8 font-body leading-relaxed text-muted-foreground">{product.description}</p>
+            <p className="mb-6 md:mb-8 font-body text-sm leading-relaxed text-muted-foreground md:text-base">{product.description}</p>
 
-            <div className="flex gap-4">
+            <div className="flex gap-3 md:gap-4">
               <WhatsAppButton 
                 productName={product.name} 
                 productPrice={product.price} 

@@ -15,33 +15,33 @@ const Categories = () => {
   ];
 
   return (
-    <section id="categories" className="py-20" ref={ref}>
+    <section id="categories" className="py-12 md:py-20" ref={ref}>
       <div
-        className={`container mx-auto px-4 transition-all duration-700 ${
+        className={`container mx-auto px-3 md:px-4 transition-all duration-700 ${
           isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
         }`}
       >
-        <h2 className="mb-2 text-center font-display text-3xl font-bold text-foreground md:text-4xl">
+        <h2 className="mb-2 text-center font-display text-xl md:text-3xl lg:text-4xl font-bold text-foreground">
           {t("categories.title")} <span className="text-primary">{t("categories.titleHighlight")}</span>
         </h2>
-        <p className="mb-12 text-center font-body text-muted-foreground">
+        <p className="mb-8 md:mb-12 text-center font-body text-xs md:text-sm text-muted-foreground">
           {t("categories.subtitle")}
         </p>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {categories.map(({ name, icon: Icon, desc, category }, i) => (
             <Link
               key={category}
               to={`/products?category=${encodeURIComponent(category)}`}
-              className={`group cursor-pointer rounded-lg border border-border bg-card p-6 text-center transition-all hover:border-primary/50 hover:bg-secondary ${
+              className={`group cursor-pointer rounded-lg border border-border bg-card p-3 text-center transition-all hover:border-primary/50 hover:bg-secondary md:p-6 ${
                 isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
               }`}
               style={{ transitionDelay: `${i * 100 + 200}ms`, transitionDuration: "500ms" }}
             >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <Icon className="h-6 w-6" />
+              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground md:mb-4 md:h-14 md:w-14">
+                <Icon className="h-4 w-4 md:h-6 md:w-6" />
               </div>
-              <h3 className="mb-1 font-display text-base font-semibold text-foreground">{name}</h3>
-              <p className="font-body text-xs text-muted-foreground">{desc}</p>
+              <h3 className="mb-0.5 md:mb-1 font-display text-xs md:text-base font-semibold text-foreground">{name}</h3>
+              <p className="font-body text-[10px] md:text-xs text-muted-foreground">{desc}</p>
             </Link>
           ))}
         </div>

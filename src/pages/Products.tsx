@@ -175,9 +175,9 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 pt-24 pb-16">
-        <div className="mb-8 text-center">
-          <h1 className="font-display text-4xl font-bold tracking-wide text-foreground md:text-5xl">
+      <main className="container mx-auto px-3 pt-20 pb-12 md:px-4 md:pt-24 md:pb-16">
+        <div className="mb-6 text-center md:mb-8">
+          <h1 className="font-display text-2xl font-bold tracking-wide text-foreground md:text-4xl lg:text-5xl">
             {t("products.allItems")} <span className="text-primary">{t("products.allItemsHighlight")}</span>
           </h1>
         </div>
