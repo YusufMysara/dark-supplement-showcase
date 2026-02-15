@@ -1,13 +1,15 @@
 import { useParams, Link } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useProduct } from "@/hooks/useProducts";
-import { ArrowLeft, Package, FlaskConical, ChartColumnStacked, Loader2 } from "lucide-react";
+import { ArrowLeft, Package, FlaskConical, ChartColumnStacked, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useTranslation } from "react-i18next";
+import ProductImageCarousel from "@/components/ProductImageCarousel";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -60,7 +62,7 @@ const ProductDetail = () => {
                 <span className="rounded-md bg-muted px-4 py-2 font-display text-xs font-bold uppercase tracking-wider text-muted-foreground md:px-6 md:text-sm">{t("products.outOfStock")}</span>
               </div>
             )}
-            <img src={product.image} alt={product.name} className="aspect-square w-full object-contain bg-white p-4 md:p-8" />
+            <ProductImageCarousel images={product.images} fallback={product.image} name={product.name} />
           </div>
 
           {/* Product Info */}
