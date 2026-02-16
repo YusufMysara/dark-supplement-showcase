@@ -46,6 +46,14 @@
     "backToProducts": "Back to Products",
     "productNotFound": "Product Not Found"
   },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "addToCart": "Add to Cart",
+    "total": "Total",
+    "confirmWhatsApp": "Confirm Order via WhatsApp",
+    "clearAll": "Clear Cart"
+  },
   "filter": {
     "availability": "Availability",
     "inStock": "In Stock",

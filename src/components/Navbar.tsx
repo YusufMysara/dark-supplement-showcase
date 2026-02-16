@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageToggle from "./LanguageToggle";
+import CartSheet from "./CartSheet";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -35,10 +36,12 @@ const Navbar = () => {
             </Link>
           ))}
           <LanguageToggle />
+          <CartSheet />
         </div>
 
         <div className="flex items-center gap-3 md:hidden">
           <LanguageToggle />
+          <CartSheet />
           <button onClick={() => setOpen(!open)} className="text-foreground">
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>

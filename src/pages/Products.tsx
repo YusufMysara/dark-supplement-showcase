@@ -5,7 +5,8 @@ import Footer from "@/components/Footer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SlidersHorizontal, X, Loader2, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { SlidersHorizontal, X, Loader2, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -90,11 +91,15 @@ const FilterSidebar = ({
 
 const ProductListCard = ({ product }: { product: Product }) => {
   const { t } = useTranslation();
-  const productUrl = `${window.location.origin}/products/${product.id}`;
+  const { addItem } = useCart();
   const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
   const [currentIndex, setCurrentIndex] = useState(0);
-  const message = `Hello, I want to order: ${product.name} - ${productUrl}`;
-  const whatsappUrl = `https://wa.me/201120011390?text=${encodeURIComponent(message)}`;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({ id: product.id, name: product.name, price: product.price, image: allImages[0] });
+  };
 
   const prevSlide = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex((p) => (p === 0 ? allImages.length - 1 : p - 1)); };
   const nextSlide = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex((p) => (p === allImages.length - 1 ? 0 : p + 1)); };
@@ -127,9 +132,9 @@ const ProductListCard = ({ product }: { product: Product }) => {
             <span className="font-body text-[10px] sm:text-sm text-muted-foreground line-through">{product.originalPrice.toFixed(2)} EGP</span>
           )}
         </div>
-        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="mt-2 sm:mt-3 flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg bg-[#25D366] px-2 sm:px-4 py-1.5 sm:py-2 font-display text-[10px] sm:text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
-          <MessageCircle className="h-3.5 w-3.5 sm:h-5 sm:w-5" /> {t("products.orderWhatsApp")}
-        </a>
+        <button onClick={handleAddToCart} disabled={!product.inStock} className="mt-2 sm:mt-3 flex w-full items-center justify-center gap-1.5 sm:gap-2 rounded-lg bg-primary px-2 sm:px-4 py-1.5 sm:py-2 font-display text-[10px] sm:text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50">
+          <ShoppingCart className="h-3.5 w-3.5 sm:h-5 sm:w-5" /> {t("cart.addToCart")}
+        </button>
       </div>
     </Link>
   );

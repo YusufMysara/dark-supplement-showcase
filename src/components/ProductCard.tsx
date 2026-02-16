@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
   id: string;
@@ -17,15 +18,16 @@ interface ProductCardProps {
   description: string;
 }
 
-const WHATSAPP_NUMBER = "+201120011390";
-
 const ProductCard = ({ id, name, category, price, originalPrice, image, images, inStock, onSale }: ProductCardProps) => {
   const { t } = useTranslation();
-  const productUrl = `${window.location.origin}/products/${id}`;
+  const { addItem } = useCart();
   const mainImage = images && images.length > 0 ? images[0] : image;
 
-  const message = `Hello, I want to order: ${name} - ${productUrl}`;
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\s/g, "")}?text=${encodeURIComponent(message)}`;
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({ id, name, price, image: mainImage });
+  };
 
   return (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
@@ -52,10 +54,14 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, images, 
           )}
         </div>
         <div className="mt-2 sm:mt-3">
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg bg-[#25D366] px-2 sm:px-4 py-1.5 sm:py-2 font-display text-[10px] sm:text-sm font-semibold text-white transition-colors hover:bg-[#20bd5a]">
-            <MessageCircle className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            <span>{t("products.orderWhatsApp")}</span>
-          </a>
+          <button
+            onClick={handleAddToCart}
+            disabled={!inStock}
+            className="flex w-full items-center justify-center gap-1.5 sm:gap-2 rounded-lg bg-primary px-2 sm:px-4 py-1.5 sm:py-2 font-display text-[10px] sm:text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          >
+            <ShoppingCart className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+            <span>{t("cart.addToCart")}</span>
+          </button>
         </div>
       </div>
     </div>

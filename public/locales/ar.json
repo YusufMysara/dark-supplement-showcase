@@ -46,6 +46,14 @@
     "backToProducts": "العودة إلى المنتجات",
     "productNotFound": "المنتج غير موجود"
   },
+  "cart": {
+    "title": "سلة التسوق",
+    "empty": "سلة التسوق فارغة",
+    "addToCart": "أضف إلى السلة",
+    "total": "الإجمالي",
+    "confirmWhatsApp": "تأكيد الطلب عبر واتساب",
+    "clearAll": "إفراغ السلة"
+  },
   "filter": {
     "availability": "التوفر",
     "inStock": "متوفر",
