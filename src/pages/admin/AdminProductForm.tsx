@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, X, Plus } from "lucide-react";
 
-const CATEGORIES = ["Creatine", "Whey Protein", "Amino", "Multivitamin", "Shorts", "Shirts"];
+const CATEGORIES = ["Protein", "Creatine", "Fat Burners", "Boosters", "Vitamins & Health", "Recovery Products", "Pre-Workout", "Women's Products", "Joint Support", "Fish Oil & Omegas", "Weight Gainers", "Protein Bars", "Apparel", "Snacks", "Sleep Aids", "Sportswear", "Bottles"];
 
 interface NutritionFact {
   label: string;

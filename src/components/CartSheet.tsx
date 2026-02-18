@@ -17,6 +17,8 @@ const CartSheet = () => {
     const message = `Hello, I want to order:\n\n${itemsList}\n\nTotal: ${totalPrice.toFixed(2)} EGP`;
     const url = `https://wa.me/${WHATSAPP_NUMBER.replace(/\s/g, "")}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
+    // Clear cart after checkout
+    clearCart();
   };
 
   return (

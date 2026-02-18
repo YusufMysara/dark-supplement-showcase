@@ -1,30 +1,40 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { useProduct } from "@/hooks/useProducts";
-import { ArrowLeft, Package, FlaskConical, ChartColumnStacked, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Package, FlaskConical, ChartColumnStacked, Loader2, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import WhatsAppButton from "@/components/WhatsAppButton";
 import { useTranslation } from "react-i18next";
 import ProductImageCarousel from "@/components/ProductImageCarousel";
+import { useCart } from "@/contexts/CartContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { data: product, isLoading } = useProduct(id);
   const { t } = useTranslation();
+  const { addItem } = useCart();
+
+  const handleAddToCart = () => {
+    if (product) {
+      addItem({ id: product.id, name: product.name, price: product.price, image: product.image });
+    }
+  };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <main className="container mx-auto flex min-h-[60vh] items-center justify-center px-3 pt-20 md:px-4 md:pt-24">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </main>
-        <Footer />
-      </div>
+      <>
+        <SEO title="Loading..." />
+        <div className="min-h-screen bg-background">
+          <Navbar />
+          <main className="container mx-auto flex min-h-[60vh] items-center justify-center px-3 md:px-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </main>
+          <Footer />
+        </div>
+      </>
     );
   }
 
@@ -32,7 +42,7 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <main className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-3 pt-20 md:px-4 md:pt-24">
+        <main className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-3 md:px-4">
           <h1 className="mb-4 font-display text-2xl md:text-3xl font-bold text-foreground">{t("products.productNotFound")}</h1>
           <Link to="/products" className="font-body text-primary hover:underline">← {t("products.backToProducts")}</Link>
         </main>
@@ -42,9 +52,15 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="container mx-auto px-3 pt-20 pb-12 md:px-4 md:pt-24 md:pb-16">
+    <>
+      <SEO 
+        title={product.name}
+        description={product.description || `Buy ${product.name} - Premium quality ${product.category} at Champion Supplement. Best price guaranteed.`}
+        image={product.image}
+      />
+      <div className="min-h-screen bg-background">
+        <Navbar />
+      <main className="container mx-auto px-3 pb-12 md:px-4 md:pb-16">
         <Link to="/products" className="mb-4 md:mb-8 inline-flex items-center gap-1.5 font-body text-xs md:text-sm text-muted-foreground transition-colors hover:text-primary md:gap-2">
           <ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" /> {t("products.backToProducts")}
         </Link>
@@ -87,11 +103,13 @@ const ProductDetail = () => {
             <p className="mb-6 md:mb-8 font-body text-sm leading-relaxed text-muted-foreground md:text-base">{product.description}</p>
 
             <div className="flex">
-              <WhatsAppButton 
-                productName={product.name} 
-                productPrice={product.price} 
-                productUrl={window.location.href} 
-              />
+              <button 
+                onClick={handleAddToCart} 
+                disabled={!product.inStock}
+                className="mt-2 sm:mt-3 flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 font-display text-xs sm:text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 sm:px-4 sm:py-2.5"
+              >
+                <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" /> {t("cart.addToCart")}
+              </button>
             </div>
           </div>
         </div>
@@ -169,6 +187,7 @@ const ProductDetail = () => {
       </main>
       <Footer />
     </div>
+    </>
   );
 };
 

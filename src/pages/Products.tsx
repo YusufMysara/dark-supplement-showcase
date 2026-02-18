@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,7 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useProducts, type Product } from "@/hooks/useProducts";
 import { useTranslation } from "react-i18next";
 
-const CATEGORIES = ["Creatine", "Whey Protein", "Amino", "Multivitamin", "Shorts", "Shirts"];
+const CATEGORIES = ["Deals", "Protein", "Creatine", "Fat Burners", "Boosters", "Vitamins & Health", "Recovery Products", "Pre-Workout", "Women's Products", "Joint Support", "Fish Oil & Omegas", "Weight Gainers", "Protein Bars", "Apparel", "Snacks", "Sleep Aids", "Sportswear", "Bottles"];
 const MAX_PRICE = 5000;
 
 const PopularProductItem = ({ product }: { product: Product }) => (
@@ -165,7 +166,17 @@ const Products = () => {
       if (!availability.inStock && p.inStock) return false;
       if (!availability.outOfStock && !p.inStock) return false;
       if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
-      if (selectedCategories.length > 0 && !selectedCategories.includes(p.category)) return false;
+      if (selectedCategories.length > 0) {
+        // Special "Deals" category shows products on sale
+        if (selectedCategories.includes("Deals") && p.onSale) {
+          // Show if on sale and matches other selected categories or no other category selected
+          const otherCategories = selectedCategories.filter(c => c !== "Deals");
+          if (otherCategories.length === 0) return true;
+          return otherCategories.includes(p.category);
+        }
+        // Normal category filtering
+        if (!selectedCategories.includes(p.category)) return false;
+      }
       return true;
     });
     switch (sortBy) {
@@ -178,9 +189,14 @@ const Products = () => {
   const sidebarProps = { availability, setAvailability, priceRange, setPriceRange, selectedCategories, toggleCategory, popularProducts };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO 
+        title="Products"
+        description="Browse our wide selection of premium supplements including protein, creatine, pre-workout, vitamins, and more. Find the perfect supplement for your fitness goals."
+      />
+      <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-3 pt-20 pb-12 md:px-4 md:pt-24 md:pb-16">
+      <main className="container mx-auto px-3 pb-12 md:px-4 md:pb-16">
         <div className="mb-6 text-center md:mb-8">
           <h1 className="font-display text-2xl font-bold tracking-wide text-foreground md:text-4xl lg:text-5xl">
             {t("products.allItems")} <span className="text-primary">{t("products.allItemsHighlight")}</span>
@@ -251,6 +267,7 @@ const Products = () => {
       </main>
       <Footer />
     </div>
+    </>
   );
 };
 

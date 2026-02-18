@@ -1,4 +1,4 @@
-import { Zap, Dumbbell, Heart, Activity } from "lucide-react";
+import { Zap, Dumbbell, Flame, Heart, Activity, User, Fish, TrendingUp, Cookie, Moon, Shirt, Droplets, CirclePlus, Package, Coffee, Timer } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useTranslation } from "react-i18next";
@@ -8,10 +8,10 @@ const Categories = () => {
   const { t } = useTranslation();
 
   const categories = [
-    { name: t("categories.preWorkout"), icon: Zap, desc: t("categories.preWorkoutDesc"), category: "Amino" },
-    { name: t("categories.protein"), icon: Dumbbell, desc: t("categories.proteinDesc"), category: "Whey Protein" },
-    { name: t("categories.vitamins"), icon: Heart, desc: t("categories.vitaminsDesc"), category: "Multivitamin" },
+    { name: t("categories.deals"), icon: Zap, desc: t("categories.dealsDesc"), category: "Deals" },
+    { name: t("categories.protein"), icon: Dumbbell, desc: t("categories.proteinDesc"), category: "Protein" },
     { name: t("categories.creatine"), icon: Activity, desc: t("categories.creatineDesc"), category: "Creatine" },
+    { name: t("categories.fatBurners"), icon: Flame, desc: t("categories.fatBurnersDesc"), category: "Fat Burners" },
   ];
 
   return (
@@ -32,16 +32,16 @@ const Categories = () => {
             <Link
               key={category}
               to={`/products?category=${encodeURIComponent(category)}`}
-              className={`group cursor-pointer rounded-lg border border-border bg-card p-3 text-center transition-all hover:border-primary/50 hover:bg-secondary md:p-6 ${
+              className={`group cursor-pointer rounded-lg border border-border bg-card p-3 text-center transition-all hover:border-primary/50 hover:bg-secondary md:p-4 ${
                 isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
               }`}
-              style={{ transitionDelay: `${i * 100 + 200}ms`, transitionDuration: "500ms" }}
+              style={{ transitionDelay: `${i * 50 + 100}ms`, transitionDuration: "500ms" }}
             >
-              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground md:mb-4 md:h-14 md:w-14">
-                <Icon className="h-4 w-4 md:h-6 md:w-6" />
+              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground md:mb-3 md:h-12 md:w-12">
+                <Icon className="h-4 w-4 md:h-5 md:w-5" />
               </div>
-              <h3 className="mb-0.5 md:mb-1 font-display text-xs md:text-base font-semibold text-foreground">{name}</h3>
-              <p className="font-body text-[10px] md:text-xs text-muted-foreground">{desc}</p>
+              <h3 className="mb-0.5 font-display text-[10px] md:text-xs font-semibold text-foreground line-clamp-1">{name}</h3>
+              <p className="hidden md:block font-body text-[10px] text-muted-foreground line-clamp-1">{desc}</p>
             </Link>
           ))}
         </div>
