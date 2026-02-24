@@ -1,4 +1,4 @@
-import test from "@/assets/Final.png";
+import photoweb from "@/assets/Final (1).webp";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -9,7 +9,7 @@ const Hero = () => {
     <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden md:min-h-screen">
       <div className="absolute inset-0">
         <img
-          src={test}
+          src={photoweb}
           alt="Champion Supplement"
           className="h-full w-full object-cover md:object-[center_30%]"
         />
