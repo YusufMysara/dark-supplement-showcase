@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useCart } from "@/contexts/CartContext";
+import { useState } from "react";
 
 interface ProductCardProps {
   id: string;
@@ -22,11 +23,25 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, images, 
   const { t } = useTranslation();
   const { addItem } = useCart();
   const mainImage = images && images.length > 0 ? images[0] : image;
+  const allImages = images && images.length > 0 ? images : [image];
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addItem({ id, name, price, image: mainImage });
+  };
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
   };
 
   return (
@@ -42,7 +57,38 @@ const ProductCard = ({ id, name, category, price, originalPrice, image, images, 
         </span>
       )}
       <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white p-4">
-        <img src={mainImage} alt={name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+        <img 
+          src={allImages[currentIndex]} 
+          alt={name} 
+          loading="lazy"
+          className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" 
+        />
+        {allImages.length > 1 && (
+          <>
+            <button
+              onClick={handlePrev}
+              className="absolute start-2 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/70"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="absolute end-2 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/70"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1">
+              {allImages.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`block h-1.5 rounded-full transition-all ${
+                    idx === currentIndex ? "w-4 bg-primary" : "w-1.5 bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
       <div className="flex flex-1 flex-col p-2 sm:p-4">
         <p className="mb-0.5 font-body text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">{category}</p>

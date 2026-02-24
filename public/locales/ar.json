@@ -72,7 +72,10 @@
     "orderWhatsApp": "اطلب عبر واتساب",
     "filters": "الفلاتر",
     "backToProducts": "العودة إلى المنتجات",
-    "productNotFound": "المنتج غير موجود"
+    "productNotFound": "المنتج غير موجود",
+    "previous": "السابق",
+    "next": "التالي",
+    "search": "ابحث عن منتجات..."
   },
   "cart": {
     "title": "سلة التسوق",

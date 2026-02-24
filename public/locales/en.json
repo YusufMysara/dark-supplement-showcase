@@ -72,7 +72,10 @@
     "orderWhatsApp": "Order on WhatsApp",
     "filters": "Filters",
     "backToProducts": "Back to Products",
-    "productNotFound": "Product Not Found"
+    "productNotFound": "Product Not Found",
+    "previous": "Previous",
+    "next": "Next",
+    "search": "Search products..."
   },
   "cart": {
     "title": "Your Cart",

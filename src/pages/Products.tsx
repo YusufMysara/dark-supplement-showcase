@@ -6,16 +6,18 @@ import SEO from "@/components/SEO";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SlidersHorizontal, X, Loader2, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { SlidersHorizontal, X, Loader2, ChevronLeft, ChevronRight, ShoppingCart, Search } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useProducts, type Product } from "@/hooks/useProducts";
 import { useTranslation } from "react-i18next";
 
 const CATEGORIES = ["Deals", "Protein", "Creatine", "Fat Burners", "Boosters", "Vitamins & Health", "Recovery Products", "Pre-Workout", "Women's Products", "Joint Support", "Fish Oil & Omegas", "Weight Gainers", "Protein Bars", "Apparel", "Snacks", "Sleep Aids", "Sportswear", "Bottles"];
-const MAX_PRICE = 5000;
+const MAX_PRICE = 10000;
+const ITEMS_PER_PAGE = 12;
 
 const PopularProductItem = ({ product }: { product: Product }) => (
   <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-2 transition-colors hover:border-primary/30">
@@ -114,7 +116,7 @@ const ProductListCard = ({ product }: { product: Product }) => {
         <span className="absolute start-3 top-3 z-10 rounded-sm bg-destructive px-2 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-destructive-foreground">{t("products.outOfStock")}</span>
       )}
       <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white p-2 sm:p-6">
-        <img src={allImages[currentIndex]} alt={product.name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+        <img src={allImages[currentIndex]} alt={product.name} loading="lazy" className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
         {allImages.length > 1 && (
           <>
             <button onClick={prevSlide} className="absolute start-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground opacity-0 shadow transition-opacity hover:bg-background group-hover:opacity-100" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></button>
@@ -149,11 +151,18 @@ const Products = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("featured");
   const [priceRange, setPriceRange] = useState<number[]>([0, MAX_PRICE]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const categoryParam = searchParams.get("category");
     if (categoryParam) setSelectedCategories([categoryParam]);
   }, [searchParams]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [availability, priceRange, selectedCategories, sortBy, searchQuery]);
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]);
@@ -163,6 +172,12 @@ const Products = () => {
 
   const filtered = useMemo(() => {
     let result = allProducts.filter((p) => {
+      // Search filter - only search by product name
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        if (!p.name.toLowerCase().includes(query)) return false;
+      }
+      
       if (!availability.inStock && p.inStock) return false;
       if (!availability.outOfStock && !p.inStock) return false;
       if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
@@ -184,7 +199,19 @@ const Products = () => {
       case "price-high": result.sort((a, b) => b.price - a.price); break;
     }
     return result;
-  }, [allProducts, availability, priceRange, selectedCategories, sortBy]);
+  }, [allProducts, availability, priceRange, selectedCategories, sortBy, searchQuery]);
+
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [filtered, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const sidebarProps = { availability, setAvailability, priceRange, setPriceRange, selectedCategories, toggleCategory, popularProducts };
 
@@ -197,57 +224,63 @@ const Products = () => {
       <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-3 pb-12 md:px-4 md:pb-16">
-        <div className="mb-6 text-center md:mb-8">
+        <div className="mb-8 text-center md:mb-12">
           <h1 className="font-display text-2xl font-bold tracking-wide text-foreground md:text-4xl lg:text-5xl">
             {t("products.allItems")} <span className="text-primary">{t("products.allItemsHighlight")}</span>
           </h1>
         </div>
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="lg:hidden">
-                  <SlidersHorizontal className="me-2 h-4 w-4" /> {t("products.filters")}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-80 overflow-y-auto bg-background">
-                <div className="pt-6"><FilterSidebar {...sidebarProps} /></div>
-              </SheetContent>
-            </Sheet>
-            <p className="font-body text-sm text-muted-foreground">
-              {t("products.showing")} <span className="font-semibold text-foreground">{filtered.length}</span> {t("products.results")}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-body text-sm text-muted-foreground">{t("products.sortBy")}</span>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-40 bg-card"><SelectValue /></SelectTrigger>
-              <SelectContent className="bg-popover">
-                <SelectItem value="featured">{t("products.featured")}</SelectItem>
-                <SelectItem value="price-low">{t("products.priceLow")}</SelectItem>
-                <SelectItem value="price-high">{t("products.priceHigh")}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        {selectedCategories.length > 0 && (
-          <div className="mb-6 flex flex-wrap items-center gap-2">
-            <span className="font-body text-xs text-muted-foreground">{t("products.activeFilters")}</span>
-            {selectedCategories.map((cat) => (
-              <Badge key={cat} variant="secondary" className="cursor-pointer gap-1 font-body text-xs" onClick={() => toggleCategory(cat)}>
-                {cat} <X className="h-3 w-3" />
-              </Badge>
-            ))}
-            <button onClick={() => setSelectedCategories([])} className="font-body text-xs text-primary underline-offset-2 hover:underline">
-              {t("products.clearAll")}
-            </button>
-          </div>
-        )}
         <div className="flex gap-8">
           <aside className="hidden w-64 shrink-0 lg:block">
             <FilterSidebar {...sidebarProps} />
           </aside>
           <div className="flex-1">
+            <div className="max-w-7xl mx-auto px-4 md:px-6">
+              <div className="mb-6 flex flex-wrap items-center gap-3 md:flex-nowrap md:justify-between">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm" className="md:hidden">
+                      <SlidersHorizontal className="me-2 h-4 w-4" /> {t("products.filters")}
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="w-80 overflow-y-auto bg-background">
+                    <div className="pt-6"><FilterSidebar {...sidebarProps} /></div>
+                  </SheetContent>
+                </Sheet>
+                <div className="relative w-full md:w-80 lg:w-96">
+                  <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder={t("products.search") || "Search..."}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="ps-10 bg-card"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-body text-sm text-muted-foreground">{t("products.sortBy")}</span>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="w-40 bg-card"><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-popover">
+                      <SelectItem value="featured">{t("products.featured")}</SelectItem>
+                      <SelectItem value="price-low">{t("products.priceLow")}</SelectItem>
+                      <SelectItem value="price-high">{t("products.priceHigh")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {selectedCategories.length > 0 && (
+                <div className="mb-6 flex flex-wrap items-center gap-2">
+                  <span className="font-body text-xs text-muted-foreground">{t("products.activeFilters")}</span>
+                  {selectedCategories.map((cat) => (
+                    <Badge key={cat} variant="secondary" className="cursor-pointer gap-1 font-body text-xs" onClick={() => toggleCategory(cat)}>
+                      {cat} <X className="h-3 w-3" />
+                    </Badge>
+                  ))}
+                  <button onClick={() => setSelectedCategories([])} className="font-body text-xs text-primary underline-offset-2 hover:underline">
+                    {t("products.clearAll")}
+                  </button>
+                </div>
+              )}
             {isLoading ? (
               <div className="flex min-h-[300px] items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -258,10 +291,40 @@ const Products = () => {
                 <p className="font-body text-sm text-muted-foreground">{t("products.noProductsHint")}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-3">
-                {filtered.map((product) => (<ProductListCard key={product.id} product={product} />))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-3">
+                  {paginatedProducts.map((product) => (<ProductListCard key={product.id} product={product} />))}
+                </div>
+                {totalPages > 1 && (
+                  <div className="mt-8 flex items-center justify-center gap-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="gap-1"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      {t("products.previous") || "Previous"}
+                    </Button>
+                    <span className="font-body text-sm text-muted-foreground">
+                      {currentPage} / {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="gap-1"
+                    >
+                      {t("products.next") || "Next"}
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
+            </div>
           </div>
         </div>
       </main>
