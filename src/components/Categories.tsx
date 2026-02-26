@@ -1,7 +1,123 @@
-import { Zap, Dumbbell, Flame, Heart, Activity, User, Fish, TrendingUp, Cookie, Moon, Shirt, Droplets, CirclePlus, Package, Coffee, Timer } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Zap, Dumbbell, Activity, Flame } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useTranslation } from "react-i18next";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useRef } from "react";
+import { Link } from "react-router-dom";
+
+const CategoryCard = ({
+  name,
+  Icon,
+  desc,
+  category,
+  delay,
+  isVisible,
+}: any) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springX = useSpring(x, { stiffness: 150, damping: 15 });
+  const springY = useSpring(y, { stiffness: 150, damping: 15 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.innerWidth < 768) return; // disable magnetic on mobile
+
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const offsetX = e.clientX - (rect.left + rect.width / 2);
+    const offsetY = e.clientY - (rect.top + rect.height / 2);
+
+    x.set(offsetX * 0.15);
+    y.set(offsetY * 0.15);
+  };
+
+  const reset = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  const createRipple = (e: React.MouseEvent<HTMLDivElement>) => {
+    const button = e.currentTarget;
+    const circle = document.createElement("span");
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.nativeEvent.offsetX - radius}px`;
+    circle.style.top = `${e.nativeEvent.offsetY - radius}px`;
+    circle.classList.add("ripple");
+
+    const ripple = button.getElementsByClassName("ripple")[0];
+    if (ripple) ripple.remove();
+
+    button.appendChild(circle);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x: springX, y: springY }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isVisible ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={reset}
+      className="relative"
+    >
+      <Link
+        to={`/products?category=${encodeURIComponent(category)}`}
+        className="block"
+      >
+        <div
+          onClick={createRipple}
+          className="
+            relative
+            overflow-hidden
+            rounded-xl md:rounded-2xl
+            bg-white/5
+            backdrop-blur-lg
+            border border-white/10
+            p-4 md:p-6
+            text-center
+            transition-all
+            duration-300
+            md:hover:-translate-y-2
+            md:hover:border-primary/40
+            md:hover:shadow-[0_20px_50px_rgba(255,0,0,0.25)]
+          "
+        >
+          {/* Icon */}
+          <div className="
+            mx-auto mb-3 md:mb-4
+            flex h-12 w-12 md:h-14 md:w-14
+            items-center justify-center
+            rounded-full
+            bg-primary/10
+            text-primary
+            transition-all
+            duration-300
+            md:group-hover:bg-primary
+            md:group-hover:text-white
+          ">
+            <Icon className="h-5 w-5 md:h-6 md:w-6" />
+          </div>
+
+          {/* Title */}
+          <h3 className="mb-1 md:mb-2 text-xs md:text-base font-semibold text-white">
+            {name}
+          </h3>
+
+          {/* Description */}
+          <p className="hidden md:block text-xs text-muted-foreground">
+            {desc}
+          </p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
 
 const Categories = () => {
   const { ref, isVisible } = useScrollReveal();
@@ -15,34 +131,35 @@ const Categories = () => {
   ];
 
   return (
-    <section id="categories" className="py-12 md:py-20" ref={ref}>
-      <div
-        className={`container mx-auto px-3 md:px-4 transition-all duration-700 ${
-          isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-        }`}
-      >
-        <h2 className="mb-2 text-center font-display text-xl md:text-3xl lg:text-4xl font-bold text-foreground">
-          {t("categories.title")} <span className="text-primary">{t("categories.titleHighlight")}</span>
+    <section
+      id="categories"
+      className="py-16 md:py-28"
+      ref={ref}
+    >
+      <div className="container mx-auto px-4">
+
+        <h2 className="mb-3 text-center font-display text-2xl md:text-5xl font-bold">
+          {t("categories.title")}{" "}
+          <span className="text-primary">
+            {t("categories.titleHighlight")}
+          </span>
         </h2>
-        <p className="mb-8 md:mb-12 text-center font-body text-xs md:text-sm text-muted-foreground">
+
+        <p className="mb-10 md:mb-16 text-center text-xs md:text-sm text-muted-foreground">
           {t("categories.subtitle")}
         </p>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+
+        <div className="grid grid-cols-2 gap-4 md:gap-8 md:grid-cols-4">
           {categories.map(({ name, icon: Icon, desc, category }, i) => (
-            <Link
+            <CategoryCard
               key={category}
-              to={`/products?category=${encodeURIComponent(category)}`}
-              className={`group cursor-pointer rounded-lg border border-border bg-card p-3 text-center transition-all hover:border-primary/50 hover:bg-secondary md:p-4 ${
-                isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-              }`}
-              style={{ transitionDelay: `${i * 50 + 100}ms`, transitionDuration: "500ms" }}
-            >
-              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground md:mb-3 md:h-12 md:w-12">
-                <Icon className="h-4 w-4 md:h-5 md:w-5" />
-              </div>
-              <h3 className="mb-0.5 font-display text-[10px] md:text-xs font-semibold text-foreground line-clamp-1">{name}</h3>
-              <p className="hidden md:block font-body text-[10px] text-muted-foreground line-clamp-1">{desc}</p>
-            </Link>
+              name={name}
+              Icon={Icon}
+              desc={desc}
+              category={category}
+              delay={i * 0.12}
+              isVisible={isVisible}
+            />
           ))}
         </div>
       </div>
