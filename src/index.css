@@ -63,7 +63,12 @@
     padding-top: 3.5rem;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     text-transform: uppercase;
     letter-spacing: 0.02em;
@@ -81,7 +86,37 @@
   .glow-red {
     box-shadow: 0 0 20px hsl(0 85% 55% / 0.3), 0 0 60px hsl(0 85% 55% / 0.1);
   }
+
   .text-glow {
     text-shadow: 0 0 20px hsl(0 85% 55% / 0.5);
   }
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 0, 0, 0.4);
+  transform: scale(0);
+  animation: ripple-effect 600ms linear;
+  pointer-events: none;
+}
+
+@keyframes ripple-effect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

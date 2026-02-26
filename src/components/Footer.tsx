@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Settings, MessageCircle, Facebook, Instagram } from "lucide-react";
+import { Settings, Facebook, Instagram } from "lucide-react";
+import { FaWhatsapp, FaTiktok } from "react-icons/fa";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useTranslation } from "react-i18next";
 
@@ -29,20 +30,21 @@ const Footer = () => {
           </div>
 
           <div className="md:text-left">
-            <h4 className="mb-2 md:mb-3 font-display text-xs md:text-sm font-semibold text-foreground">
+            <h4 className="mb-4 font-display text-xs md:text-sm font-semibold text-foreground">
               {t("footer.contact")}
             </h4>
 
-            <div className="space-y-2">
+            {/* Social Icons Row */}
+            <div className="flex items-center gap-5">
+
               {/* WhatsApp */}
               <a
                 href="https://wa.me/201120011390?text=Hello%20Champion%20Supplement"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 font-body text-xs md:text-sm text-muted-foreground hover:text-primary"
+                className="group transition-transform hover:scale-110"
               >
-                <MessageCircle className="h-4 w-4" />
-                <span>+201120011390</span>
+                <FaWhatsapp className="h-5 w-5 text-green-500 group-hover:text-green-600 transition-colors" />
               </a>
 
               {/* Facebook */}
@@ -50,10 +52,9 @@ const Footer = () => {
                 href="https://www.facebook.com/share/1KN983cHp1/?mibextid=wwXIfr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 font-body text-xs md:text-sm text-muted-foreground hover:text-primary"
+                className="group transition-transform hover:scale-110"
               >
-                <Facebook className="h-4 w-4" />
-                <span>Champion Supplement</span>
+                <Facebook className="h-5 w-5 text-blue-600 group-hover:text-blue-700 transition-colors" />
               </a>
 
               {/* Instagram */}
@@ -61,11 +62,21 @@ const Footer = () => {
                 href="https://www.instagram.com/champion.supplement?igsh=OWdsZmZ0YmowaThu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 font-body text-xs md:text-sm text-muted-foreground hover:text-primary"
+                className="group transition-transform hover:scale-110"
               >
-                <Instagram className="h-4 w-4" />
-                <span>Champion Supplement</span>
+                <Instagram className="h-5 w-5 text-pink-500 group-hover:text-pink-600 transition-colors" />
               </a>
+
+              {/* TikTok */}
+              <a
+                href="https://www.tiktok.com/@champion.supplement?_r=1&_t=ZS-94FiDj4FOHl"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group transition-transform hover:scale-110"
+              >
+                <FaTiktok className="h-5 w-5 text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors" />
+              </a>
+
             </div>
           </div>
         </div>
