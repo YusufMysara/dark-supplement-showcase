@@ -1,10 +1,9 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { useProduct } from "@/hooks/useProducts";
 import {
-  ArrowLeft,
   Package,
   FlaskConical,
   ChartColumnStacked,
@@ -27,10 +26,9 @@ const ProductDetail = () => {
 
   const [activeTab, setActiveTab] = useState("ingredients");
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [added, setAdded] = useState(false);
 
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, -50]);
+  const y = useTransform(scrollY, [0, 500], [0, -40]);
 
   // Scroll Progress
   useEffect(() => {
@@ -48,19 +46,17 @@ const ProductDetail = () => {
   // Scroll Spy
   useEffect(() => {
     const sections = ["ingredients", "nutrition", "details", "warnings"];
-
     const handleScroll = () => {
       let current = "ingredients";
       sections.forEach((section) => {
         const el = document.getElementById(section);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= 150) current = section;
+          if (rect.top <= 120) current = section;
         }
       });
       setActiveTab(current);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -73,9 +69,6 @@ const ProductDetail = () => {
       price: product.price,
       image: product.image,
     });
-
-    setAdded(true);
-    setTimeout(() => setAdded(false), 500);
   };
 
   if (isLoading) {
@@ -94,20 +87,24 @@ const ProductDetail = () => {
 
   return (
     <>
-      <SEO title={product.name} description={product.description} image={product.image} />
+      <SEO
+        title={product.name}
+        description={product.description}
+        image={product.image}
+      />
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background overflow-x-hidden">
 
         {/* Scroll Progress */}
         <div
-          className="fixed top-0 left-0 h-1 bg-primary z-[9999] transition-all duration-200"
+          className="fixed top-0 left-0 h-1 bg-primary z-[9999]"
           style={{ width: `${scrollProgress}%` }}
         />
 
         <Navbar />
 
         <motion.main
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="container mx-auto px-4 pb-20"
@@ -116,9 +113,11 @@ const ProductDetail = () => {
           {/* Top Section */}
           <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-2">
 
-            {/* Parallax Image */}
+            {/* Product Image */}
             <motion.div
               style={{ y }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 200 }}
               className="rounded-2xl border border-border bg-white overflow-hidden"
             >
               <ProductImageCarousel
@@ -130,18 +129,17 @@ const ProductDetail = () => {
 
             {/* Product Info */}
             <div className="flex flex-col justify-center">
-              <h1 className="mb-4 text-3xl lg:text-4xl font-bold">
+              <h1 className="mb-4 text-2xl md:text-4xl font-bold">
                 {product.name}
               </h1>
 
-              <span className="text-3xl font-bold text-primary mb-6">
+              <span className="text-2xl md:text-3xl font-bold text-primary mb-6">
                 {product.price.toFixed(2)} EGP
               </span>
 
               <button
                 onClick={handleAddToCart}
-                className={`flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-white font-semibold transition transform ${added ? "scale-110 shadow-2xl" : ""
-                  } hover:scale-105`}
+                className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {t("cart.addToCart")}
@@ -150,58 +148,59 @@ const ProductDetail = () => {
           </div>
 
           {/* Sticky Tabs */}
-          <div className="mt-20 sticky top-20 z-30 backdrop-blur-xl bg-background/70 border-b border-border py-4">
+          <div className="mt-20 sticky top-20 z-30 backdrop-blur-xl bg-background/80 border-b border-border py-3">
+            <div className="w-full overflow-hidden">
+              <Tabs value={activeTab} className="w-full">
+                <TabsList className="flex w-full overflow-x-auto no-scrollbar gap-4 bg-transparent p-0">
 
-            <Tabs value={activeTab} className="w-full">
-              <TabsList className="flex gap-6 bg-transparent p-0">
-
-                <TabsTrigger
-                  value="ingredients"
-                  onClick={() =>
-                    document.getElementById("ingredients")?.scrollIntoView()
-                  }
-                  className="font-semibold text-sm"
-                >
-                  <FlaskConical className="inline h-4 w-4 mr-2" />
-                  Directions
-                </TabsTrigger>
-
-                {product.nutritionFacts.length > 0 && (
                   <TabsTrigger
-                    value="nutrition"
+                    value="ingredients"
                     onClick={() =>
-                      document.getElementById("nutrition")?.scrollIntoView()
+                      document.getElementById("ingredients")?.scrollIntoView({ behavior: "smooth" })
                     }
-                    className="font-semibold text-sm"
+                    className="relative whitespace-nowrap px-2 py-1 text-xs md:text-sm font-semibold after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 data-[state=active]:after:w-full"
                   >
-                    <ChartColumnStacked className="inline h-4 w-4 mr-2" />
-                    Nutrition
+                    <FlaskConical className="inline h-4 w-4 mr-1" />
+                    Directions
                   </TabsTrigger>
-                )}
 
-                <TabsTrigger
-                  value="details"
-                  onClick={() =>
-                    document.getElementById("details")?.scrollIntoView()
-                  }
-                  className="font-semibold text-sm"
-                >
-                  <Package className="inline h-4 w-4 mr-2" />
-                  Details
-                </TabsTrigger>
+                  {product.nutritionFacts.length > 0 && (
+                    <TabsTrigger
+                      value="nutrition"
+                      onClick={() =>
+                        document.getElementById("nutrition")?.scrollIntoView({ behavior: "smooth" })
+                      }
+                      className="relative whitespace-nowrap px-2 py-1 text-xs md:text-sm font-semibold after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 data-[state=active]:after:w-full"
+                    >
+                      <ChartColumnStacked className="inline h-4 w-4 mr-1" />
+                      Nutrition
+                    </TabsTrigger>
+                  )}
 
-                <TabsTrigger
-                  value="warnings"
-                  onClick={() =>
-                    document.getElementById("warnings")?.scrollIntoView()
-                  }
-                  className="font-semibold text-sm text-yellow-400"
-                >
-                  ⚠ Warnings
-                </TabsTrigger>
+                  <TabsTrigger
+                    value="details"
+                    onClick={() =>
+                      document.getElementById("details")?.scrollIntoView({ behavior: "smooth" })
+                    }
+                    className="relative whitespace-nowrap px-2 py-1 text-xs md:text-sm font-semibold after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 data-[state=active]:after:w-full"
+                  >
+                    <Package className="inline h-4 w-4 mr-1" />
+                    Details
+                  </TabsTrigger>
 
-              </TabsList>
-            </Tabs>
+                  <TabsTrigger
+                    value="warnings"
+                    onClick={() =>
+                      document.getElementById("warnings")?.scrollIntoView({ behavior: "smooth" })
+                    }
+                    className="relative whitespace-nowrap px-2 py-1 text-xs md:text-sm font-semibold text-yellow-400 after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all after:duration-300 data-[state=active]:after:w-full"
+                  >
+                    ⚠ Warnings
+                  </TabsTrigger>
+
+                </TabsList>
+              </Tabs>
+            </div>
           </div>
 
           {/* Sections */}
@@ -241,7 +240,7 @@ const ProductDetail = () => {
 
           <section
             id="warnings"
-            className="mt-24 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-8"
+            className="mt-24 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-6"
           >
             <h2 className="text-2xl font-bold text-yellow-400 mb-6">
               ⚠ Important Warnings

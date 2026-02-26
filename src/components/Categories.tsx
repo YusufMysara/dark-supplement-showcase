@@ -18,19 +18,19 @@ const CategoryCard = ({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const springX = useSpring(x, { stiffness: 150, damping: 15 });
-  const springY = useSpring(y, { stiffness: 150, damping: 15 });
+  const springX = useSpring(x, { stiffness: 120, damping: 14 });
+  const springY = useSpring(y, { stiffness: 120, damping: 14 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (window.innerWidth < 768) return; // disable magnetic on mobile
+    if (window.innerWidth < 768) return;
 
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const offsetX = e.clientX - (rect.left + rect.width / 2);
     const offsetY = e.clientY - (rect.top + rect.height / 2);
 
-    x.set(offsetX * 0.15);
-    y.set(offsetY * 0.15);
+    x.set(offsetX * 0.12);
+    y.set(offsetY * 0.12);
   };
 
   const reset = () => {
@@ -47,24 +47,30 @@ const CategoryCard = ({
     circle.style.width = circle.style.height = `${diameter}px`;
     circle.style.left = `${e.nativeEvent.offsetX - radius}px`;
     circle.style.top = `${e.nativeEvent.offsetY - radius}px`;
-    circle.classList.add("ripple");
+    circle.className =
+      "absolute bg-white/20 rounded-full animate-ping pointer-events-none";
 
     const ripple = button.getElementsByClassName("ripple")[0];
     if (ripple) ripple.remove();
 
     button.appendChild(circle);
+    setTimeout(() => circle.remove(), 500);
   };
 
   return (
     <motion.div
       ref={ref}
       style={{ x: springX, y: springY }}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isVisible ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay }}
+      initial={{ opacity: 0, y: 50, scale: 0.95 }}
+      animate={
+        isVisible
+          ? { opacity: 1, y: 0, scale: 1 }
+          : {}
+      }
+      transition={{ delay, duration: 0.5 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={reset}
-      className="relative"
+      className="relative will-change-transform"
     >
       <Link
         to={`/products?category=${encodeURIComponent(category)}`}
@@ -83,25 +89,33 @@ const CategoryCard = ({
             text-center
             transition-all
             duration-300
-            md:hover:-translate-y-2
-            md:hover:border-primary/40
-            md:hover:shadow-[0_20px_50px_rgba(255,0,0,0.25)]
+            hover:shadow-[0_20px_50px_rgba(255,0,0,0.25)]
+            hover:border-primary/40
+            hover:-translate-y-2
+            active:scale-95
           "
         >
           {/* Icon */}
-          <div className="
-            mx-auto mb-3 md:mb-4
-            flex h-12 w-12 md:h-14 md:w-14
-            items-center justify-center
-            rounded-full
-            bg-primary/10
-            text-primary
-            transition-all
-            duration-300
-            md:group-hover:bg-primary
-            md:group-hover:text-white
-          ">
-            <Icon className="h-5 w-5 md:h-6 md:w-6" />
+          <div
+            className="
+              mx-auto mb-3 md:mb-4
+              flex h-12 w-12 md:h-14 md:w-14
+              items-center justify-center
+              rounded-full
+              bg-primary/10
+              text-primary
+              transition-all
+              duration-300
+              group-hover:bg-primary
+              group-hover:text-white
+            "
+          >
+            <motion.div
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Icon className="h-5 w-5 md:h-6 md:w-6" />
+            </motion.div>
           </div>
 
           {/* Title */}
@@ -131,11 +145,7 @@ const Categories = () => {
   ];
 
   return (
-    <section
-      id="categories"
-      className="py-16 md:py-28"
-      ref={ref}
-    >
+    <section id="categories" className="py-16 md:py-28" ref={ref}>
       <div className="container mx-auto px-4">
 
         <h2 className="mb-3 text-center font-display text-2xl md:text-5xl font-bold">
@@ -157,7 +167,7 @@ const Categories = () => {
               Icon={Icon}
               desc={desc}
               category={category}
-              delay={i * 0.12}
+              delay={i * 0.15}
               isVisible={isVisible}
             />
           ))}
