@@ -5,6 +5,7 @@ interface SEOProps {
   description?: string;
   image?: string;
   url?: string;
+  schema?: object;
 }
 
 const DEFAULT_TITLE = "CHAMPION SUPPLEMENT";
@@ -16,6 +17,7 @@ const SEO = ({
   description = DEFAULT_DESCRIPTION,
   image = DEFAULT_IMAGE,
   url,
+  schema,
 }: SEOProps) => {
   const pageTitle = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE;
 
@@ -38,6 +40,13 @@ const SEO = ({
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+
+      {/* Structured Data (JSON-LD) */}
+      {schema && (
+        <script type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      )}
     </Helmet>
   );
 };

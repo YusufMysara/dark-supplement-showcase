@@ -23,6 +23,33 @@ const ProductDetail = () => {
     }
   };
 
+  // JSON-LD structured data for product
+  const productSchema = product ? {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description,
+    "image": product.images && product.images.length > 0 ? product.images : [product.image],
+    "sku": product.id,
+    "brand": {
+      "@type": "Brand",
+      "name": "CHAMPION SUPPLEMENT"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://champion-supplement.com/products/${product.id}`,
+      "priceCurrency": "EGP",
+      "price": product.price,
+      "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": product.rating || 4.5,
+      "reviewCount": product.reviews || 0
+    }
+  } : null;
+
   if (isLoading) {
     return (
       <>
@@ -57,6 +84,8 @@ const ProductDetail = () => {
         title={product.name}
         description={product.description || `Buy ${product.name} - Premium quality ${product.category} at Champion Supplement. Best price guaranteed.`}
         image={product.image}
+        url={`https://champion-supplement.com/products/${product.id}`}
+        schema={productSchema}
       />
       <div className="min-h-screen bg-background">
         <Navbar />
