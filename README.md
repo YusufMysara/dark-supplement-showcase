@@ -66,7 +66,7 @@ src/
 ├── pages/          # Storefront pages and admin pages
 ├── hooks/          # Custom hooks (auth, products, ...)
 ├── contexts/       # Cart context
-├── integrations/   # Supabase client and generated types
+├── integrations/   # Supabase client and database types
 └── data/           # Static data
 public/locales/     # en.json and ar.json translations
 supabase/           # Supabase config and SQL migrations
