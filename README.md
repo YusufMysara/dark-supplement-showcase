@@ -71,7 +71,3 @@ src/
 public/locales/     # en.json and ar.json translations
 supabase/           # Supabase config and SQL migrations
 ```
-
-## License
-
-MIT
